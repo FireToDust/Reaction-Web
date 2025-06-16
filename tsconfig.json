@@ -17,8 +17,11 @@
     "isolatedModules": true,
     "noEmit": true,
     /* Linting */
-    "strict": false,
+    "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     /* types */
     "typeRoots": [
       "./node_modules/@webgpu/types",

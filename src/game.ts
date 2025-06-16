@@ -1,9 +1,9 @@
 // Note: You can import your separate WGSL shader files like this.
-import { GameData } from './types';
-import * as Renderer from "./renderer"
-import setup from "./setup"
+import { GameData } from './core/types';
+import * as Renderer from './graphics/renderer'
+import setup from './core/setup'
 import { Pane } from 'tweakpane';
-import { Reaction, Rules, and, or, not, tileAt, Tile, Dir} from './rules';
+import { Reaction, Rules, and, or, not, tileAt, Tile, Dir} from './rules/rules';
 import { randomChoice } from './utils/util';
 
 let gameData: GameData = {

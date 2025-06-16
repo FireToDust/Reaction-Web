@@ -6,7 +6,7 @@ export function assert(
     msg?: string | (() => string)
   ): asserts condition {
     if (!condition) {
-      throw new Error(msg && (typeof msg === 'string' ? msg : msg()));
+      throw new Error(msg ? (typeof msg === 'string' ? msg : msg()) : 'Assertion failed');
     }
   }
 
@@ -25,6 +25,14 @@ export function unreachable(msg?: string): never {
 throw new Error(msg);
 }
 
-export function randomChoice(arr) {
-  return arr[Math.floor(arr.length * Math.random())];
+/**
+ * Select a random element from an array
+ * @param arr - Array of choices to select from
+ * @returns A random element from the choices array
+ */
+export function randomChoice<T>(arr: T[]): T {
+  if (arr.length === 0) {
+    throw new Error("Cannot select from empty array");
+  }
+  return arr[Math.floor(arr.length * Math.random())]!;
 }
