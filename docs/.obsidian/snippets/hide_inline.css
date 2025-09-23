@@ -1,0 +1,29 @@
+/* --- Dataview Inline Field Minimal Styling in Live Preview --- */
+
+/* Reset backgrounds, borders, and shadows everywhere */
+.dataview.inline-field,
+.dataview.inline-field-key,
+.dataview.inline-field-key + .dataview.inline-field-value:before,
+.dataview.inline-field-value {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important; /* Ensure no extra spacing */
+}
+
+/* Style the property name (key) */
+.dataview.inline-field-key,
+.dataview.inline-field-key + .dataview.inline-field-value:before {
+    display: none !important;
+    
+}
+
+/* Style the value */
+.dataview.inline-field-value {
+    font-weight: normal !important; /* Not bold */
+    color: var(--text-normal) !important; /* Normal text color */
+    font-size: 0.9em !important; /* Slightly smaller than regular text */
+    opacity: 1 !important;
+}
+
