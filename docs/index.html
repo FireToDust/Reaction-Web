@@ -6,88 +6,208 @@
     <title>Reaction v2 Documentation</title>
     <meta name="description" content="Real-time PvP grid-based spellcasting game documentation">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
-            line-height: 1.6;
-            color: #333;
         }
-        .hero {
+        .hero-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        .status-badge {
+            display: inline-block;
+            background: #f0f4f8;
+            color: #667eea;
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .main-cta {
+            display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 1rem 3rem;
             border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
-        .section {
+        .main-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
-            padding: 1.5rem;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
         }
-        .section h2 {
-            margin-top: 0;
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .info-card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .info-card p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+        .info-card ul {
+            list-style: none;
+            color: #64748b;
+        }
+        .info-card ul li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .info-card ul li:last-child {
+            border-bottom: none;
+        }
+        .info-card ul li strong {
             color: #2c3e50;
         }
-        .note {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 1rem;
-            margin: 1rem 0;
+        .links-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        a {
+        .links-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #f8fafc;
             color: #667eea;
             text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
-        a:hover {
-            text-decoration: underline;
+        .link-button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            .hero-card {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Reaction v2 Documentation</h1>
-        <p>Real-time PvP grid-based spellcasting game where players cast spells that place magical runes, transforming terrain through rule-based systems.</p>
-    </div>
-
-    <div class="section">
-        <h2>📖 Documentation Status</h2>
-        <div class="note">
-            <strong>Note:</strong> This documentation site will be automatically generated from your Obsidian notes using the webpage HTML export plugin. The exported files will appear here once you run the export.
+    <div class="container">
+        <div class="hero-card">
+            <h1>Reaction v2</h1>
+            <p class="subtitle">
+                A real-time PvP grid-based spellcasting game where players cast spells that place magical runes, 
+                transforming terrain through physics-based rule systems.
+            </p>
+            <div class="status-badge">🚧 Architecture Phase</div>
+            <div>
+                <a href="./docs.html" class="main-cta">Browse Documentation →</a>
+            </div>
         </div>
-        <p>Current development stage: <strong>Architecture Phase</strong></p>
-        <p>Focus: Designing system architecture before interfaces/tests/implementation</p>
-    </div>
 
-    <div class="section">
-        <h2>🚀 Quick Start</h2>
-        <p>To set up the documentation export:</p>
-        <ol>
-            <li>Open Obsidian with your docs vault</li>
-            <li>Use the "Export as HTML" command from the webpage-html-export plugin</li>
-            <li>Set the export directory to: <code>gh-pages/docs</code></li>
-            <li>Run the export to generate the static site</li>
-        </ol>
-    </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <h2>📚 About</h2>
+                <p>
+                    Reaction v2 is a complete reimagining of the original Reaction game, 
+                    featuring GPU-accelerated physics, deterministic gameplay, and a powerful 
+                    spell crafting system. Currently in the architecture design phase.
+                </p>
+            </div>
 
-    <div class="section">
-        <h2>📁 Expected Structure</h2>
-        <p>Once exported, your documentation will be organized as:</p>
-        <ul>
-            <li><strong>Architecture</strong> - System design and technical decisions</li>
-            <li><strong>Development</strong> - Guidelines and principles</li>
-            <li><strong>Gameplay</strong> - Core mechanics and rules</li>
-            <li><strong>Legacy</strong> - v1 reference materials</li>
-        </ul>
-    </div>
+            <div class="info-card">
+                <h2>🎮 Key Features</h2>
+                <ul>
+                    <li><strong>Real-time PvP</strong> - Fast-paced multiplayer battles</li>
+                    <li><strong>Spell Crafting</strong> - Create custom spell combinations</li>
+                    <li><strong>Rule-based Physics</strong> - Dynamic terrain transformation</li>
+                    <li><strong>GPU Acceleration</strong> - High-performance rendering</li>
+                </ul>
+            </div>
 
-    <div class="section">
-        <h2>🔗 Links</h2>
-        <p><a href="https://github.com/FireToDust/Reaction-Web">GitHub Repository</a></p>
-        <p><a href="./docs/index.html">Documentation (Available after export)</a></p>
+            <div class="info-card">
+                <h2>📂 Documentation</h2>
+                <ul>
+                    <li><strong>Architecture</strong> - System design & technical specs</li>
+                    <li><strong>Development</strong> - Guidelines & principles</li>
+                    <li><strong>Gameplay</strong> - Mechanics & rules</li>
+                    <li><strong>Legacy</strong> - v1 reference materials</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="links-section">
+            <div class="links-container">
+                <a href="./docs.html" class="link-button">
+                    📖 Full Documentation
+                </a>
+                <a href="https://github.com/FireToDust/Reaction-Web" class="link-button">
+                    🔗 GitHub Repository
+                </a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
