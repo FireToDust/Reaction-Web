@@ -19,11 +19,17 @@
     
 }
 
-/* Style the value */
+/* Style the value - match normal link appearance */
 .dataview.inline-field-value {
-    font-weight: normal !important; /* Not bold */
-    color: var(--text-normal) !important; /* Normal text color */
-    font-size: 0.9em !important; /* Slightly smaller than regular text */
+    font-weight: 600 !important; /* Match bold link weight */
+    color: var(--link-color, var(--text-accent)) !important; /* Use link color */
+    font-size: 1em !important; /* Full size, same as normal text */
     opacity: 1 !important;
+}
+
+/* Ensure links inside dataview fields also look correct */
+.dataview.inline-field-value a {
+    font-weight: 600 !important;
+    font-size: 1em !important;
 }
 
