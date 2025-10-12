@@ -9,6 +9,10 @@ Real-time PvP grid-based spellcasting game where players cast spells that place 
 - **Complete Documentation**: [docs/](docs/)
 - **Architecture Overview**: [docs/architecture/overview.md](docs/architecture/overview.md)
 - **Development Setup**: [docs/development/getting-started.md](docs/development/getting-started.md)
+- **Documentation Building**: [docs/development/building-documentation.md](docs/development/building-documentation.md)
+
+## Documentation Build Process
+**Note for Claude**: Documentation builds require the user to manually run the Obsidian "Webpage HTML Export" plugin to export `docs/` to `build/docs`, then use git subtree to deploy to gh-pages branch. You cannot build documentation yourself - always ask the user to run the Obsidian export first.
 
 ## Development Commands
 ```bash
