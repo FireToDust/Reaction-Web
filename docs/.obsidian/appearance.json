@@ -1,5 +1,6 @@
 {
   "enabledCssSnippets": [
-    "hide_inline"
+    "hide_inline",
+    "title_styling"
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "obsidian-linter:lint-all-files": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "L"
+    }
+  ],
+  "editor:toggle-checklist-status": []
+}

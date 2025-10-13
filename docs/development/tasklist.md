@@ -8,55 +8,178 @@ tags:
 
 Automatically generated task list from all TODO items found in the documentation using Dataview.
 
-## Status Overview
+## Overview
 
-Summary of documentation completion status:
+> [!abstract]+ Status Overview
+> ```dataview
+> TABLE length(todo) as "TODOs", length(warnings) as "Warnings", status
+> FROM ""
+> WHERE todo OR status OR warnings
+> SORT status ASC, length(todo) DESC
+> ```
 
-```dataview
-TABLE length(todo) as "TODO Count", length(warnings) as "Warning Count", status
-FROM ""
-WHERE todo OR status OR warnings
-SORT status ASC, length(todo) DESC
-```
+> [!todo]+ All TODO Items
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> SORT file.name ASC
+> ```
 
-## TODO Items
+> [!warning]+ All Warnings
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> SORT file.name ASC
+> ```
 
-Organized view of TODO items grouped by file:
+> [!tip]+ Files by Status
+> ```dataview
+> TABLE status, tags, length(todo) as "TODOs", length(warnings) as "Warnings"
+> FROM ""
+> WHERE status
+> SORT status ASC, file.name ASC
+> ```
 
-```dataview
-LIST todo
-FROM ""
-WHERE todo
-SORT file.name ASC
-```
+## TODO Items by Category
 
-## Warnings and Discussion Items
+> [!todo]- Implementation Tasks
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[implementation]")
+> ```
 
-Files with warnings or items requiring team discussion:
+> [!todo]- Testing Tasks
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[testing]")
+> ```
 
-```dataview
-LIST warnings
-FROM ""
-WHERE warnings
-SORT file.name ASC
-```
+> [!todo]- Discussion Items
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[discussion]")
+> ```
 
-## Stub Files Requiring Completion
+> [!todo]- Research Items
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[research]")
+> ```
 
-Files marked as stubs that need to be completed:
+> [!todo]- Documentation Tasks
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[documentation]")
+> ```
 
-```dataview
-TABLE status, tags
-FROM ""
-WHERE status = "stub"
-SORT file.name ASC
-```
+> [!todo]- Review Tasks
+> ```dataview
+> LIST todo
+> FROM ""
+> WHERE todo
+> FLATTEN todo AS task
+> WHERE contains(task, "[review]")
+> ```
+
+## Warnings by Type
+
+> [!warning]- Proposed Systems
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[proposed]")
+> ```
+
+> [!warning]- Outdated Documents
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[outdated]")
+> ```
+
+> [!warning]- Breaking Changes
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[breaking]")
+> ```
+
+> [!warning]- Performance Concerns
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[performance]")
+> ```
+
+> [!warning]- Security Concerns
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[security]")
+> ```
+
+> [!warning]- Technical Debt
+> ```dataview
+> LIST warnings
+> FROM ""
+> WHERE warnings
+> FLATTEN warnings AS warning
+> WHERE contains(warning, "[debt]")
+> ```
+
+## Specific Status Views
+
+> [!info]- Stub Files
+> ```dataview
+> TABLE status, tags
+> FROM ""
+> WHERE status = "stub"
+> SORT file.name ASC
+> ```
+
+> [!abstract]- Proposed Documents
+> ```dataview
+> TABLE status, tags
+> FROM ""
+> WHERE status = "proposed"
+> SORT file.name ASC
+> ```
+
+> [!warning]- Outdated Documents
+> ```dataview
+> TABLE status, tags
+> FROM ""
+> WHERE status = "outdated"
+> SORT file.name ASC
+> ```
 
 ---
 
-**Note**: This task list is automatically generated using Dataview queries. Add `todo:` fields to any documentation file's frontmatter to have items appear here automatically.
-
-**Usage**: 
-- Add TODO items to file frontmatter: `todo: ["Item 1", "Item 2"]`
-- Mark files as stubs: `status: stub`
-- Items will automatically appear in the appropriate sections above
+**Note**: This page automatically aggregates todos, warnings, and status information from frontmatter metadata across all documentation files. For complete documentation on how to use frontmatter fields (status, tags, todo categories, warning types) and integration with the documentation structure, see [cross-reference:: [[DOCUMENTATION_STRUCTURE#Frontmatter Metadata|Frontmatter Metadata Documentation]]].

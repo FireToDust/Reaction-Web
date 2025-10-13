@@ -1,0 +1,14 @@
+/* --- Inline Title (Filename) Styling --- */
+
+/* Style the inline title in both reading and editing views */
+.inline-title {
+    text-transform: capitalize !important;
+    font-size: 2.5em !important;
+    font-weight: 700 !important;
+}
+
+/* Also target the view header title */
+.view-header-title {
+    text-transform: capitalize !important;
+    font-size: 1.2em !important;
+}

@@ -1,5 +1,7 @@
 [
   "dataview",
   "extended-graph",
-  "webpage-html-export"
+  "webpage-html-export",
+  "breadcrumbs",
+  "obsidian-linter"
 ]
