@@ -23,12 +23,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "development/getting-started.md",
+                "file": "index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "getting-started"
+              "title": "index"
             }
           }
         ],
@@ -174,15 +174,9 @@
   },
   "active": "9cf8f53c6eccd117",
   "lastOpenFiles": [
-    "development/getting-started.md",
-    "development/DOCUMENTATION_STRUCTURE.md",
-    "development/DEVELOPMENT_PRINCIPLES.md",
-    "development/development.md",
-    "gameplay/gameplay.md",
-    "gameplay/core-mechanics.md",
-    "legacy/legacy.md",
+    "index.md",
+    "development/building-documentation.md",
     "docs.md",
-    "architecture/systems/reactions/reactions.md",
     "architecture/architecture.md",
     "architecture/general/data-flow.md",
     "architecture/general/ghost-simulation.md",
@@ -200,6 +194,12 @@
     "architecture/systems/gpu/gpu.md",
     "architecture/systems/core/tile-storage.md",
     "architecture/systems/core/texture-management.md",
+    "architecture/systems/core/core.md",
+    "architecture/systems/multiplayer/multiplayer.md",
+    "architecture/systems/multiplayer/deployment.md",
+    "architecture/systems/multiplayer/client-prediction.md",
+    "architecture/systems/multiplayer/security.md",
+    "architecture/systems/multiplayer/performance.md",
     "legacy",
     "gameplay",
     "development",

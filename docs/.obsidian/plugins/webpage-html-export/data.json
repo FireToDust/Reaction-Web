@@ -10,7 +10,7 @@
     "postProcess": true,
     "displayProgress": true,
     "inlineHTML": false,
-    "exportPath": "/Users/ashcoombs/Projects/Coding/Reaction Web/docs",
+    "exportPath": "/Users/ashcoombs/Projects/Coding/Reaction Web/builds/docs",
     "filesToExport": [],
     "useFallbackRenderer": false,
     "addBodyClasses": true,

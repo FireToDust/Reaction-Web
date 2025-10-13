@@ -18,13 +18,18 @@ The documentation system uses Obsidian for authoring (in `docs/`) and exports to
 
 ### 2. Deploy to GitHub Pages
 
-After exporting, run this command from the project root:
+After exporting, commit and push the changes in the worktree:
 
 ```bash
-git subtree push --prefix=build/docs origin gh-pages
+cd build/docs
+git add .
+git commit -m "Update documentation"
+git push
+cd ../..
 ```
 
 ## Notes
 - Documentation source files (Markdown) live in `docs/` on the main branch
-- Built HTML files are deployed to the `gh-pages` branch using git subtree
+- Built HTML files are in `build/docs/` which is a git worktree of the `gh-pages` branch
+- The worktree allows direct commits to gh-pages without switching branches
 - Changes to documentation require rebuilding and redeploying

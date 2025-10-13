@@ -8,7 +8,7 @@ todo:
   - Add getting started quick links
 ---
 
-# Reaction v2 Documentation
+# Reaction Documentation
 
 **Status**: 🚧 **Stub** - This index file needs completion
 
