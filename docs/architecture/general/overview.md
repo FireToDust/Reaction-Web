@@ -32,7 +32,7 @@ The system separates concerns into focused, loosely-coupled modules:
 
 **Dependencies**: WebGPU API
 
-### Spell System Module  
+### Spell System Module
 **Purpose**: Player-controlled spellcasting and resource management.
 
 **Responsibilities**:

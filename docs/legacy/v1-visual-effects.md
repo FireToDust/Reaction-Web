@@ -172,7 +172,7 @@ Time-based variation: Colors influenced by animation state
 
 **Personal Addition**: These design considerations haven't been discussed with the team.
 
-### Visual Complexity vs Performance
+### Visual Complexity Vs Performance
 
 **V1 Evidence**: Complex mathematical calculations per pixel (6-wave water system, procedural grass, multi-octave noise)
 

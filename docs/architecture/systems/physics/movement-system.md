@@ -84,7 +84,7 @@ The collision system uses multiple GPU compute passes to resolve complex scenari
 
 **Path Storage**: Write collision path, timing, and tile type changes to tile's memory location.
 
-### Pass 3 to 3+n: Iterative Resolution  
+### Pass 3 to 3+n: Iterative Resolution
 **Updated Collision Detection**:
 - Recalculate collisions assuming tiles follow stored paths from previous pass
 - Update neighborhood based on new projected movements
@@ -131,7 +131,7 @@ The collision system uses multiple GPU compute passes to resolve complex scenari
 
 **Active Region Processing**: Focus compute resources on chunks containing moving tiles.
 
-### Spell System  
+### Spell System
 **Velocity Input**: Receive velocity changes from spell processing.
 
 **Event Coordination**: Provide collision timing for spell trigger synchronization.
@@ -168,7 +168,7 @@ The collision system uses multiple GPU compute passes to resolve complex scenari
 
 **Memory Bandwidth**: Optimized data layout for GPU texture cache.
 
-### Determinism Guarantees  
+### Determinism Guarantees
 **Convergence-Based Determinism**: Multi-pass iteration ensures consistent collision resolution regardless of processing order.
 
 **Integer Mathematics**: Fixed-point arithmetic prevents floating-point drift.

@@ -237,7 +237,7 @@ Bounds checking: Prevents threads from loading beyond cache dimensions
 2. **Integrate active region optimization** with V1's workgroup patterns
 3. **Consider rule compilation** targeting similar GPU optimization patterns
 
-### Research V1 vs V2 Trade-offs
+### Research V1 Vs V2 Trade-offs
 1. **Complexity vs Performance**: V1 handled very complex rules - should V2 target similar capability?
 2. **Memory vs Computation**: V1 used memory to reduce computation - is this optimal for V2?
 3. **Synchronization Overhead**: Will V2's additional systems require more GPU barriers?

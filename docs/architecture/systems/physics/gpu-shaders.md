@@ -30,7 +30,7 @@ fn velocity_setting_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
 }
 ```
 
-### Pass 2: Initial Collision Detection Shader  
+### Pass 2: Initial Collision Detection Shader
 ```wgsl
 @compute @workgroup_size(8, 8)
 fn collision_detection_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
@@ -160,7 +160,7 @@ fn collision_pass(@builtin(global_invocation_id) global_id: vec3<u32>,
 
 **Atomic Operations**: GPU atomics ensure consistent conflict resolution when multiple tiles target same location.
 
-### Precision Control  
+### Precision Control
 ```wgsl
 // Integer-only collision time calculation
 fn calculate_collision_time(tile_a: TileData, tile_b: TileData) -> u32 {

@@ -207,7 +207,7 @@ Memory usage: Linear with rule complexity
 
 **Team Discussion Needed**: Memory allocation strategy for V2's different requirements.
 
-### Data Density vs Simplicity Trade-offs
+### Data Density Vs Simplicity Trade-offs
 
 **V1 Approach**: Maximum density through complex bit manipulation
 **V2 Considerations**: Balance between efficiency and implementation complexity
@@ -221,7 +221,7 @@ Memory usage: Linear with rule complexity
 
 **Personal Assessment**: V1 patterns suggest specific data design considerations for V2.
 
-### Packing Complexity vs Performance
+### Packing Complexity Vs Performance
 
 **V1 Evidence**: Complex packing achieved high data density and good GPU performance
 **V2 Trade-offs**: Implementation complexity vs memory/performance benefits

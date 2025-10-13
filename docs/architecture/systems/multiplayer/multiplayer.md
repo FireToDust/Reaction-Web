@@ -16,7 +16,7 @@ The multiplayer system leverages Reaction's deterministic engine design to enabl
 ### [Server Architecture](server-architecture.md)
 Authoritative game simulation with GPU-accelerated processing identical to client engine.
 
-### [Client Prediction](client-prediction.md) 
+### [Client Prediction](client-prediction.md)
 Local state prediction with rollback mechanisms for responsive gameplay despite network latency.
 
 ### [Network Protocol](network-protocol.md)

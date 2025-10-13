@@ -59,7 +59,7 @@ GPU-accelerated physics simulation providing smooth tile movement between grid l
 - **World Boundaries**: Wrapping system for tiles at world edges
 - **Memory Efficiency**: Direct texture operations with workgroup caching
 
-### Spell System Integration  
+### Spell System Integration
 - **Velocity Input**: Receive velocity changes from spell processing
 - **Collision Response**: Tile type changes and destruction from collision results
 - **Event Output**: Collision timing and results for spell trigger coordination

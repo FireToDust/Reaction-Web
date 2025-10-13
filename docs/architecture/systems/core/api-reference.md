@@ -61,7 +61,7 @@ interface RunePlacementAPI {
 }
 ```
 
-### Physics Engine Integration  
+### Physics Engine Integration
 **Velocity Management API**:
 ```typescript
 // Preliminary interface - subject to change
@@ -154,7 +154,7 @@ interface ChunkCoord {
 - **WebGPU API**: Core dependency for all GPU operations
 - **TypeScript**: Type safety and development experience
 
-### Internal Dependencies  
+### Internal Dependencies
 - Integration with all other game modules
 - Shared type definitions across the codebase
 - Common utility functions and error types

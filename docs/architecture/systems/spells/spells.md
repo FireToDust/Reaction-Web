@@ -35,14 +35,14 @@ See individual component documentation for detailed mechanics:
 - [Mana System](mana-system.md) - Resource management and recharge cycles
 - [Spells and Runes](spells-and-runes.md) - Casting mechanics and rune interactions
 
-## Customization Features  
+## Customization Features
 
 ### Deck Building
 - **Pre-game Selection**: Choose spells from available collection
 - **Deck Constraints**: ⚠️ **NEEDS DISCUSSION** - Specific deck building rules TBD
 - **Spell Relationships**: ⚠️ **SUGGESTION** - Consider thematic spell interactions
 
-### Curse System  
+### Curse System
 - **Risk/Reward**: Power vs. risk trade-offs
 - **Build Balance**: ⚠️ **NEEDS DISCUSSION** - Balance between pure and cursed builds
 - **Implementation**: ⚠️ **NEEDS DESIGN** - Specific curse mechanics and effects

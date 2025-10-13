@@ -8,24 +8,24 @@
 
 ## Layer Architecture
 
-#### Layer Organization
+### Layer Organization
 - **Ground Layer**: Terrain foundation (dirt, stone, water)
 - **Object Layer**: Interactive entities (rocks, trees, creatures)
 - **Air Layer**: Gases and effects (fire, smoke, magic)  
 - **Rune Layer**: Spell-placed magical effects (temporary)
 
-#### Bit-Packing Format
+### Bit-Packing Format
 **Note**: Specific bit allocation TBD during implementation. Approximate layout:
 - Tile Type (~6 bits, chosen for comfortable headroom)
 - Velocity X/Y (signed values for movement)
 - Custom Data (remaining bits for health, timers, charges)
 
-### Texture Management
+## Texture Management
 **Texture Ping-Ponging**: Each layer uses paired textures (`layer_A`, `layer_B`) enabling GPU modules to read from stable data while writing to separate textures, avoiding read-after-write hazards.
 
 **Memory Layout**: Textures use `r32uint` format for optimal GPU cache performance.
 
-### Active Region System
+## Active Region System
 **Purpose**: Avoid processing static regions to maintain performance.
 
 **Implementation**:

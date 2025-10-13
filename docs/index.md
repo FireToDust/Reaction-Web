@@ -1,4 +1,4 @@
-# Welcome to Reaction v2
+# Welcome to Reaction V2
 
 ## A Real-Time PvP Grid-Based Spellcasting Game
 

@@ -79,7 +79,7 @@ Casting mechanics, rune lifecycle, and spell combinations.
 **Timing Coordination**: Rune triggers coordinate with physics updates
 **Movement Effects**: Spell effects can alter tile velocities
 
-### Reaction Engine Integration  
+### Reaction Engine Integration
 **Environmental Triggers**: Runes can trigger environmental transformations
 **Rule Interactions**: Spell effects interact with world transformation rules
 **Compound Effects**: Spells + environment create complex interactions

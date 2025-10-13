@@ -49,7 +49,7 @@ The Core Engine coordinates data flow between CPU spell logic and GPU simulation
 - **Physics Engine**: Reads/writes velocity data via texture pairs
 - **Reaction Engine**: Processes transformation rules on tile data
 
-### Output Interfaces  
+### Output Interfaces
 - **Renderer**: Provides read-only access to current tile states for display
 - **Game Logic**: Exposes tile query API for validation and state checking
 

@@ -84,7 +84,7 @@ fn process_active_chunks(@builtin(global_invocation_id) global_id: vec3<u32>) {
 - **Movement Processing**: Physics updates active chunk list based on tile movement
 - **Collision Detection**: Collision effects activate neighboring chunks
 
-### Reaction Engine  
+### Reaction Engine
 - **Rule Processing**: Environmental transformations mark affected chunks active
 - **Pattern Matching**: Large-scale patterns may activate multiple chunks
 

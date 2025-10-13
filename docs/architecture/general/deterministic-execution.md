@@ -160,7 +160,7 @@ class DeterminismValidator {
 
 **Compatibility Matrix**: Maintain supported hardware and driver combinations.
 
-### Performance vs Determinism Trade-offs
+### Performance Vs Determinism Trade-offs
 **Optimization Constraints**: Some GPU optimizations may break determinism.
 
 **Testing Requirements**: Extensive validation needed for any physics changes.

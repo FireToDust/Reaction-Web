@@ -16,7 +16,7 @@ Design choices, rationale, and alternative approaches considered during Reaction
 
 ## Processing Model Decisions
 
-### CPU vs GPU Assignment
+### CPU Vs GPU Assignment
 **Spell System**: Initially chosen for CPU because it handles direct player input and seemed more straightforward to implement. This choice may be revisited during implementation.
 
 **Physics Engine**: GPU compute shaders with hardcoded physics rules

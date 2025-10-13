@@ -43,7 +43,7 @@ The GPU Manager System manages the WebGPU instance, device initialization, and r
 - **Error Recovery**: Robust handling of GPU context loss
 - **Performance Profiling**: Built-in GPU timing and resource monitoring
 
-### Resource Coordination  
+### Resource Coordination
 - **Allocation Tracking**: Monitor buffer and texture usage across systems
 - **Memory Optimization**: Efficient sharing and reuse of GPU resources
 - **Priority Management**: Coordinate competing GPU workloads

@@ -109,7 +109,7 @@ Cache position: local_coord + cache_offset + relative_position
 
 **Personal Assessment**: V2 might benefit from studying V1's memory access patterns before designing new shaders.
 
-### Determinism Guarantees  
+### Determinism Guarantees
 **Question**: How will V2 ensure deterministic evaluation order that V1 achieved?
 
 **V1 Evidence**: Strict tile-by-tile processing with consistent neighbor checking order
