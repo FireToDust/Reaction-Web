@@ -1,6 +1,10 @@
 ---
 tags:
   - Navigation
+warnings:
+  - "[outdated] Active region system references - not being implemented"
+todo:
+  - "[documentation] Update multiplayer integration based on final architecture decisions"
 ---
 
 # Multiplayer System
@@ -40,8 +44,8 @@ Container orchestration, regional deployment, and horizontal scaling infrastruct
 
 **Deterministic Design Benefits**
 - Integer-only mathematics ensures identical client/server results
-- Strict execution order enables reliable rollback mechanisms
-- Active region system scales network bandwidth with activity level
+- Simultaneous read/write GPU passes enable reliable rollback mechanisms
+- ~~Active region system scales network bandwidth with activity level~~ **⚠️ Active regions not implemented**: Network optimization uses other strategies
 
 **WebGPU Compatibility**
 - Server requires GPU-capable infrastructure

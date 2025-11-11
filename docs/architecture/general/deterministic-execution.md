@@ -1,13 +1,26 @@
+---
+warnings:
+  - "[outdated] Spatial Ordering Strategy section describes an approach that is NOT being used"
+  - "[outdated] Active region references (32×32 chunks) are not being implemented"
+  - "[discussion] Current approach uses simultaneous single-read/single-write GPU passes with deterministic internal rules"
+todo:
+  - "[documentation] Rewrite determinism section to describe actual simultaneous read/write pass approach"
+  - "[documentation] Remove spatial ordering and active region references"
+  - "[discussion] Document the actual deterministic execution strategy being used"
+---
+
 # Deterministic Execution Framework
 
 **⚠️ PROPOSED SYSTEM**: This document describes the proposed deterministic execution approach for GPU-accelerated physics and reactions. This system solves the fundamental challenge of achieving identical results across different hardware for competitive multiplayer.
+
+**⚠️ CURRENT APPROACH**: The actual determinism strategy being used is **simultaneous single-read/single-write GPU passes with deterministic internal rules**, NOT the spatial ordering strategy described below. The spatial ordering and active region approaches have been superseded.
 
 ## Problem Statement
 
 ### GPU Non-Determinism Challenge
 **Core Issue**: GPU thread execution order within workgroups is not inherently deterministic.
 
-**Impact**: 
+**Impact**:
 - Non-deterministic collision resolution between tiles
 - Inconsistent force application results
 - Different outcomes on different hardware
@@ -15,14 +28,20 @@
 
 **Criticality**: Essential for fair PvP gameplay and replay capability.
 
-## Solution: Spatial Ordering Strategy
+## Solution: Simultaneous Read/Write Passes (Current Approach)
 
-### Deterministic Processing Order
-**Chunk-Level Ordering**: Process 32×32 chunks in strict spatial sequence (top-left to bottom-right).
+**⚠️ NOTE**: The current architecture achieves determinism through simultaneous single-read and single-write GPU passes, with all operations happening at the same time using deterministic internal rules. This is NOT the spatial ordering strategy described in the following section.
 
-**Tile-Level Ordering**: Within each chunk, process tiles in deterministic spatial order.
+## ~~Solution: Spatial Ordering Strategy~~ (Outdated Approach)
 
-**Player-Level Ordering**: Process players in consistent ID-based sequence.
+**⚠️ OUTDATED**: The following spatial ordering strategy is NOT being used in the current architecture.
+
+### ~~Deterministic Processing Order~~
+**Chunk-Level Ordering**: ~~Process 32×32 chunks in strict spatial sequence (top-left to bottom-right).~~
+
+**Tile-Level Ordering**: ~~Within each chunk, process tiles in deterministic spatial order.~~
+
+**Player-Level Ordering**: ~~Process players in consistent ID-based sequence.~~
 
 ### GPU Compute Implementation
 ```glsl

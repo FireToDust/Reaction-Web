@@ -1,176 +1,169 @@
+---
+status: proposed
+tags:
+  - Architecture
+  - Implementation
+todo:
+  - "[discussion] Define mass values for different object types across all layers"
+---
+
 # Movement System
 
-Free-form positioning with cohesion forces and multi-pass collision resolution architecture.
+Hexagonal grid with sub-grid positioning, velocity management, mass-based interactions, and combination mechanics.
 
-## System Overview
+## Overview
 
-**Movement Model**: Unconstrained movement using integer-precision positioning for deterministic physics.
+Objects move freely on a hexagonal grid using sub-grid offsets and persistent velocities. The combination mechanic merges objects that get too close, maintaining the one-object-per-cell guarantee while enabling dynamic physics interactions.
 
-**Collision Resolution**: Multi-pass GPU compute pipeline for deterministic collision handling.
+## Hexagonal Grid Positioning
 
-**Cohesion Forces**: Automatic gap-closing and tile clustering for natural density management.
+### Grid Structure
 
-**Integration**: Provides collision events and position data to renderer for smooth visual interpolation.
+**Hex Cell Size**: Corner-to-corner distance d chosen to equal the minimum combination distance.
 
-## Free-Form Movement Model
+**One-Per-Cell Guarantee**: Cell size ensures no two objects can occupy the same cell, even during mid-movement.
 
-### Offset Positioning System
-**Precision**: Fixed-point arithmetic using texture-optimized bit precision for deterministic results.
+**Polar Coordinates**: Grid uses polar/cube coordinate system for neighbor lookup and point-to-hex conversion.
 
-**Unconstrained Direction**: Tiles can move in any direction based on collision physics and spell effects.
+**GPU Storage**: Grid stored as skewed parallelogram with wrapped boundaries, enabling rectangular indexing.
 
-**Offset Storage**: Each tile stores its precise x,y offsets from grid center as integer values within texture memory.
+**World Wrapping**: Objects at world edges wrap to opposite side for continuous circular world.
 
-### Movement Integration
-**Renderer Interpolation**: Smooth visual movement using precise position data and collision event timing.
+### Sub-Grid Positioning
 
-**Continuous Positioning**: Tiles can have any offset from their grid centers using integer coordinates.
+**Offset Storage**: Each object stores precise x,y offsets from its hex cell center using fixed-point arithmetic.
 
-**Velocity Representation**: Two-component velocity vectors (x,y) stored with texture-optimized precision.
+**Unconstrained Movement**: Objects can move freely in any direction based on applied forces.
 
-## Cohesion Force System
+**Precision**: Fixed-point representation ensures deterministic positioning across platforms.
 
-### Gap-Closing Mechanics
-**Purpose**: Automatically close gaps between tiles and maintain dense tile coverage without rigid grid constraints.
+**Cell Assignment**: Objects remain assigned to their current hex cell until the final "set grid position" pass.
 
-**Force Calculation**: Clamped linear attraction between tiles within 1.5 block radius.
+## Velocity Management
 
-**Neighborhood Processing**: 5x5 grid examination to account for tile positioning at sub-grid locations.
+### Velocity Storage
 
-### Cohesion Force Implementation
-**Distance Calculation**: Calculate center-to-center distance between current tile and all neighbors in 5x5 area.
+**Vector Representation**: Two-component velocity (x,y) stored with fixed-point precision.
 
-**Force Formula**: `Force = max(0, cohesion_strength * (1.5 - distance) / 1.5)`
+**Texture Storage**: Velocities stored in GPU textures alongside position data.
 
-**Force Direction**: Attraction toward the centroid (average position) of nearby tiles within cohesion radius.
+**Deterministic Updates**: All velocity changes use fixed-point arithmetic.
 
-### Benefits
-**Dense Coverage**: Tiles automatically maintain dense world coverage without explicit positioning rules.
+**Frame Persistence**: Velocity persists frame-to-frame unless modified by forces.
 
-**Gap Elimination**: Empty spaces between adjacent tiles get naturally filled by cohesion attraction.
+### Velocity Sources
 
-**Breaking Force**: High-velocity impacts can overcome cohesion to separate tiles and create temporary gaps.
+**Applied Forces**: Collision, cohesion, and spell forces modify velocity each frame (see [cross-reference:: [[forces|Forces]]]).
 
-**Emergent Organization**: Organic tile distribution that responds dynamically to collisions and spell effects while maintaining coverage.
+**Spell Inputs**: Spell elements can apply impulses or directly set velocities.
 
-## Multi-Pass Collision Pipeline
+**Combinations**: Merged objects receive mass-averaged velocity.
 
-### Pipeline Overview
-The collision system uses multiple GPU compute passes to resolve complex scenarios:
+**Damping**: Optional velocity damping to prevent perpetual motion (TBD through playtesting).
 
-1. **Velocity Setting Pass**: Apply spell inputs to update tile velocities
-2. **Initial Collision Pass**: Calculate collision times assuming straight-line paths  
-3. **Iterative Passes**: Recalculate collisions based on updated paths from previous passes
-4. **Final Pass**: Execute collisions or generate error tiles for conflicts
+### Speed Limits
 
-### Pass 1: Velocity Setting
-**Input Processing**: 
-- Read spell system velocity change requests
-- Apply velocity modifications to affected tiles
-- Handle spell-induced tile type changes
+**Maximum Velocity**: ~9.69 hex cells/second at 60fps based on two-layer force range guarantee.
 
-**Neighborhood Analysis**: May examine local area for context-dependent velocity changes.
+**Gameplay Range**: Typical gameplay velocities 2-6 cells/second, providing margin for force application.
 
-### Pass 2: Initial Collision Detection
-**Neighborhood Scanning**: 
-- Moving tiles: Examine 7×7 grid around tile position
-- Stationary tiles: Examine 5×5 grid for efficiency  
-- Dynamic sizing: Calculate affected cells based on velocity and current position
+**Range Guarantee**: Two hex layers sufficient for all force interactions within speed limits.
 
-**Collision Calculation**: 
-- Project straight-line paths for all tiles in neighborhood
-- Calculate collision time based on tile size and relative velocities
-- Find minimum collision time across all potential collisions
+## Mass System
 
-**Path Storage**: Write collision path, timing, and tile type changes to tile's memory location.
+### Object Mass
 
-### Pass 3 to 3+n: Iterative Resolution
-**Updated Collision Detection**:
-- Recalculate collisions assuming tiles follow stored paths from previous pass
-- Update neighborhood based on new projected movements
-- Store refined collision paths and timings
+**Type-Based**: Each object type has an associated mass value.
 
-**Convergence Checking**: Continue until paths stabilize or maximum pass count reached.
+**Layer Variation**: Different layers may have different mass ranges (e.g., ground heavier than air).
 
-### Final Pass: Collision Execution
-**Convergence Verification**: Check if collision times would change with another iteration.
+**Gameplay Impact**: Mass affects force response and combination outcomes.
 
-**Collision Resolution**: 
-- Execute tile movements to calculated positions
-- Apply collision-induced tile type changes
-- Handle tile destruction from collision results
+**⚠️ NEEDS SPECIFICATION**: Specific mass values for object types TBD through gameplay balancing.
 
-**Conflict Handling**: Use GPU atomics to generate error tiles when multiple tiles target same location.
+### Mass in Physics
 
-## Technical Implementation
+**Force Response**: Heavier objects accelerate less from the same applied force (F = ma).
 
-### GPU Compute Architecture
-**Workgroup Organization**: Each workgroup processes a neighborhood region with shared local memory cache.
+**Collision Interaction**: Mass ratio between colliding objects affects their relative force responses.
 
-**Memory Access Patterns**:
-- Preload neighborhood data into workgroup local memory
-- Sequential processing to maintain deterministic order
-- Atomic operations for collision conflict resolution
+**Combination Averaging**: When objects combine, velocities are mass-averaged to conserve momentum.
 
-### Boundary Conditions
-**World Wrapping**: Tiles at world edges wrap to opposite side by default.
+**Conservation**: Total momentum preserved during combinations: `m1*v1 + m2*v2 = m_combined * v_combined`
 
-**Neighborhood Handling**: 7×7 neighborhoods near edges access wrapped coordinates for collision detection.
+## Combination Mechanic
 
-### Performance Optimizations
-**Early Termination**: Skip remaining passes if no collision paths change.
+### Purpose
 
-**Workgroup Caching**: Load full neighborhood into local memory when possible.
+**One-Per-Cell Guarantee**: Ensures no hex cell ever contains more than one object.
 
-**Bit-Packed Data**: Minimize memory bandwidth with compact data structures.
+**Gameplay Feature**: Creates dynamic object fusion and reaction chains.
 
-## Integration Points
+**Physics Stability**: Prevents infinite force application from perpetually overlapping objects.
 
-### Core Engine
-**Texture Coordination**: Read from stable textures, write to ping-pong buffers.
+### Trigger Conditions
 
-**Active Region Processing**: Focus compute resources on chunks containing moving tiles.
+**Distance Threshold**: Combination triggered when two objects approach closer than distance d.
 
-### Spell System
-**Velocity Input**: Receive velocity changes from spell processing.
+**Merge Radius**: All objects with centers within d of the combined center are included in the merge.
 
-**Event Coordination**: Provide collision timing for spell trigger synchronization.
+**Multi-Object Merges**: Single combination can merge 3+ objects if they're all within radius.
 
-### Renderer
-**Event Buffer**: Generate collision events with precise timing data.
+### Combination Process
 
-**Interpolation Data**: Provide sub-grid positioning for smooth visual movement.
+**Velocity Averaging**: Combined velocity is mass-weighted average of all merged objects.
 
-### Reaction System
-**Layer Separation**: Physics handles same-layer interactions; reactions handle cross-layer effects.
+**Type Transformation**: New object type determined by reaction rules applied to merged objects (see [cross-reference:: [[reactions|Reaction System]]]).
 
-**Performance Integration**: May merge shaders for efficiency if beneficial.
+**Mass Assignment**: New object mass based on its transformed type.
+
+**Position**: Combined object placed at mass-weighted centroid of merged objects.
 
 ## Data Structures
 
-### Tile Physics Data
-- **Offset**: Unconstrained x,y offset from grid center (texture-optimized precision)
-- **Velocity Vector**: Two-component velocity (x,y) with texture-optimized precision
-- **Collision Path**: Projected movement and collision points
-- **Type Changes**: Tile transformations from collision results
+### Object Physics Data
 
-### Event Buffer Format
-- **Collision Timing**: When collisions occur within physics tick
-- **Collision Results**: Tile movements, destructions, type changes
-- **Interpolation Points**: Data needed for smooth rendering
+**Position**:
+- Hex cell coordinates (using polar/cube system)
+- Fixed-point offset (x,y) from cell center
 
-## Performance Characteristics
+**Velocity**:
+- Fixed-point vector (x,y)
+- Stored in GPU texture alongside position
 
-### Scalability Considerations
-**Pass Limiting**: Configurable maximum iterations prevent infinite loops.
+**Properties**:
+- Object type ID (for mass lookup and reactions)
+- Mass value (may be stored or computed from type)
+- Layer assignment (Ground/Object/Air)
 
-**Workgroup Efficiency**: Balance neighborhood size with GPU architecture.
+**Texture Layout**: Data packed efficiently for GPU texture storage and access patterns.
 
-**Memory Bandwidth**: Optimized data layout for GPU texture cache.
+## Integration Points
 
-### Determinism Guarantees
-**Convergence-Based Determinism**: Multi-pass iteration ensures consistent collision resolution regardless of processing order.
+### Forces System
+- Velocity modified by forces each frame
+- See [cross-reference:: [[forces|Forces]]] for force types and calculations
 
-**Integer Mathematics**: Fixed-point arithmetic prevents floating-point drift.
+### GPU Implementation
+- Movement calculations performed in GPU compute shaders
+- See [cross-reference:: [[gpu-shaders|GPU Shaders]]] for pipeline details
 
-**Atomic Consistency**: GPU atomics ensure deterministic conflict resolution when multiple tiles target same destination.
+### Spell System
+- Objects check spell buffer for overlapping spell shapes
+- Spell elements determine force application method
+- See [cross-reference:: [[spells|Spell System]]] for spell mechanics
+
+### Reaction System
+- Combination types determined by reaction rules
+- New object mass based on reaction-determined type
+- See [cross-reference:: [[reactions|Reaction System]]] for transformation rules
+
+### Renderer
+- Sub-grid offsets provide precise visual positioning
+- Velocities available for motion blur and particle effects
+
+## Three-Layer Architecture
+
+- **Ground Layer**: Terrain foundation (dirt, stone, water)
+- **Object Layer**: Interactive entities (rocks, trees, creatures, players)
+- **Air Layer**: Gases and effects (fire, smoke, magic)

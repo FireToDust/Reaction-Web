@@ -1,111 +1,123 @@
+---
+status: approved
+tags:
+  - Architecture
+warnings:
+  - "[outdated] Previously mentioned CPU processing - now fully GPU-accelerated"
+todo:
+  - "[discussion] Number of casting slots/pools - using 4 as example, final count TBD"
+  - "[discussion] Obstruction checks for line of sight"
+  - "[discussion] Specific shape primitives for spell design"
+  - "[discussion] Single element rune additional effects beyond mana recharge"
+---
+
 # Spells and Runes
 
-Casting mechanics, rune lifecycle, and spell combinations.
+Slot/pool casting interface with GPU-accelerated spell shapes, element combinations, and rune lifecycle management.
 
-## Spell Casting Process
+## Casting Interface
 
-### Casting Flow
-1. **Selection**: Player chooses spell from hand
-2. **Validation**: Check mana cost and target range
-3. **Execution**: Place runes according to spell pattern
-4. **Cost**: Exhaust required mana flowers
-5. **Cooldown**: Start mana flower recharge timers
+### Slot and Pool System
 
-### Spell Properties
-- **Mana Cost**: Specific mana types and quantities required
-- **Range**: Maximum targeting distance from caster
-- **Pattern**: Grid layout of runes placed around target
-- **Effects**: Rune types, forces, and delays in pattern
+**Structure**: N casting slots + N casting pools (using 4 as example, final count TBD)
 
-### Validation Rules
-**Mana Requirements**: Must have sufficient flowers of correct types
-**Range Limits**: Target must be within spell's maximum range
-**Obstruction Checks**: ⚠️ **NEEDS DESIGN** - Line of sight or other targeting restrictions
-**Cooldown Status**: Cannot cast if required mana flowers still recharging
+**Starting State**: All slots empty, all pools filled with random spells from deck
+
+### Three Player Actions
+
+**1. Cast Spell** (from filled slot):
+- Consumes required mana flowers (see [cross-reference:: [[mana-system|Mana System]]])
+- Triggers directional targeting mode
+- Slot becomes empty after cast
+- Pools unchanged
+
+**2. Load Spell** (pool → empty slot):
+- Player selects spell from any pool
+- Chosen spell moves to clicked slot
+- All pools refill sequentially from deck (see [cross-reference:: [[deck-building|Deck Building]]])
+- No mana cost
+
+**3. Refresh Pools**:
+- Manually replace all pool spells with new draws from deck
+- Triggers action cooldown
+- Flowers do NOT recharge during refresh cooldown (unique penalty)
+
+### Action Cooldown
+
+**Universal Cooldown**: Single shared cooldown applies to all three actions
+
+**Movement**: Not affected by action cooldown
+
+**Hold-to-Cast Queueing**: Hold mouse on filled slot during cooldown to queue cast for immediate execution when ready
+
+### Directional Targeting
+
+**Activation**: After clicking cast, enter targeting mode
+
+**Input**: Player clicks direction and distance from avatar
+
+**Placement**: Spell shape centered on clicked location
+
+**Range Limits**: Each spell has maximum range from caster
+
+**Obstruction**: ⚠️ **NEEDS DESIGN** - Line of sight checks TBD
+
+## Spell Shapes
+
+**Design**: Abstract geometric primitives (circles, rectangles, lines, etc.) evaluated at runtime
+
+**Not Textures**: Mathematical definitions, not pre-rendered images
+
+**Evaluation**: GPU compute shaders evaluate shape membership per-pixel
+
+**Primitives**: ⚠️ **NEEDS SPECIFICATION** - Specific primitive set TBD through spell design process
+
+**Shape Components**:
+- Position (relative to spell center)
+- Rotation and scale
+- Element type (from [cross-reference:: [[element-system|Element System]]])
+- Force vector
+- Delay value
 
 ## Rune System
 
-### Rune Properties
-- **Type**: Determines transformation effects (fire, ice, force, etc.)
-- **Force**: Velocity applied when triggered  
-- **Delay**: Countdown timer before activation
-
 ### Rune Lifecycle
-1. **Placement**: Created by spell casting on rune layer
-2. **Delay**: Countdown each CPU processing cycle
-3. **Triggering**: Apply transformations and forces when delay reaches zero
-4. **Combination**: Merge with other runes on same tile
-5. **Removal**: Clean up spent runes after effects applied
 
-## Rune Interactions
+1. **Placement**: Spell casting writes runes to rune layer via GPU
+2. **Delay Countdown**: GPU shader decrements delay counter each frame
+3. **Trigger + Removal**: Simultaneous - apply effects and remove rune when delay reaches zero
+4. **Combination**: Multiple runes on same pixel combine before triggering
 
-### Combination Mechanics
-**Purpose**: Create spell combinations.
+### Rune Properties
 
-**Automatic Merging**: Multiple runes on same tile combine automatically
-**Force Combination**: Result has combined force vectors
+**Element Type**: One of 26 elements (see [cross-reference:: [[element-system|Element System]]])
+
+**Force Vector**: Applied to physics layer when triggered
+
+**Delay Counter**: Frame-based countdown
+
+**Storage**: Per-pixel on dedicated rune layer texture
+
+### Rune Combination
+
+**Timing**: Runes combine when multiple exist on same pixel
+
+**Element Rules**: Uses element system cancellation rules (see [cross-reference:: [[element-system|Element System]]])
+
+**Force Combination**: Vector addition of all force components
+
 **Delay Resolution**: Combined rune uses minimum delay of components
-**Type Resolution**: New type determined by combination rules table
 
-### Combination Examples
-⚠️ **NEEDS SPECIFICATION**: Detailed combination rules and outcomes
+**Trigger Timing**: Combined rune triggers when shortest delay expires
 
-**Fire + Water**: Steam rune with area effect
-**Earth + Air**: Dust storm with movement effects
-**Force + Force**: Amplified knockback effects
-**Conflicting Types**: Some combinations may cancel forces or produce no rune
+## GPU Processing
 
-### Emergent Complexity
-**Simple Rules**: Basic combination table creates complex interactions
-**Strategic Depth**: Players can plan multi-spell combinations
-**Unpredictable Results**: Opponent spells can interfere with combinations
+**Delay System**: 16-bit looping time counter, runes store target trigger time
 
-## Spell Hand Management
+**Shape Evaluation**: Compute shaders evaluate abstract primitives per-pixel during spell placement
 
-### Hand Mechanics
-- **Hand Size**: ⚠️ **TBD** based on UI and gameplay needs
-- **Replenishment**: Draw from personal spell deck each turn
-- **Deck Construction**: Pre-game selection from available spells
+**Element Combination**: Shader-based component-level cancellation during rune combination
 
-### Spell Availability
-**Turn-based Drawing**: New spells available each turn
-**Deck Cycling**: ⚠️ **NEEDS DESIGN** - What happens when deck is exhausted?
-**Hand Limits**: Maximum spells available at once for UI and balance
+**Cleanup**: Separate shader pass removes triggered runes
 
-## Integration with Game Systems
-
-### Physics Engine Integration
-**Force Application**: Runes queue forces for physics processing
-**Timing Coordination**: Rune triggers coordinate with physics updates
-**Movement Effects**: Spell effects can alter tile velocities
-
-### Reaction Engine Integration
-**Environmental Triggers**: Runes can trigger environmental transformations
-**Rule Interactions**: Spell effects interact with world transformation rules
-**Compound Effects**: Spells + environment create complex interactions
-
-### Core Engine Integration
-**Rune Placement**: Direct texture writes to rune layer
-**State Queries**: Read tile data for spell validation
-**Layer Coordination**: Ensure proper interaction between spell effects and world state
-
-## Performance Considerations
-
-### CPU Processing Benefits
-**Complex Logic**: Conditional spell rules without shader limitations
-**Easy Debugging**: Step-through debugging of spell logic
-**Immediate Response**: No GPU compilation delays for spell modifications
-**Dynamic Rules**: Runtime spell behavior changes possible
-
-### Potential Optimizations
-⚠️ **FUTURE CONSIDERATION**: Moving some spell processing to GPU if CPU becomes bottleneck
-- Simple rune countdown could be GPU-accelerated
-- Complex combination logic likely remains CPU-bound
-
-## Design Challenges
-
-⚠️ **NEEDS RESOLUTION**:
-- **Hand Size Balancing**: Too many spells overwhelming, too few limiting strategy
-- **Deck Exhaustion**: What happens when player runs out of spells?
-- **Combination Complexity**: How complex should rune interactions become?
-- **Performance Scaling**: CPU spell processing vs. large numbers of active runes
+**Determinism**: Fixed-point precision, order-independent combination results

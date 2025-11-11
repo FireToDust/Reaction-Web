@@ -1,3 +1,11 @@
+---
+warnings:
+  - "[outdated] Active region optimization references removed - system not being implemented"
+  - "[outdated] data-flow.md reference is outdated"
+todo:
+  - "[discussion] Mass values for different tile types in collision physics"
+  - "[documentation] Document actual determinism approach (simultaneous read/write passes)"
+---
 
 # System Architecture Overview
 
@@ -27,39 +35,43 @@ The system separates concerns into focused, loosely-coupled modules:
 **Responsibilities**:
 - Bit-packed tile storage across 4 layers (Ground, Object, Air, Rune)
 - GPU texture management with ping-ponging (enables GPU modules to read from stable data while writing to separate textures, avoiding read-after-write hazards) for race-condition prevention
-- Active region optimization (32×32 chunks - chosen to balance GPU workgroup efficiency with memory overhead)
+- ~~Active region optimization (32×32 chunks - chosen to balance GPU workgroup efficiency with memory overhead)~~ **⚠️ NOT IMPLEMENTED**: Active region optimization was decided against
 - Frame execution pipeline coordination
 
 **Dependencies**: WebGPU API
 
 ### Spell System Module
-**Purpose**: Player-controlled spellcasting and resource management.
+**Purpose**: GPU-accelerated player-controlled spellcasting with geometric element system.
 
 **Responsibilities**:
-- Mana flower economy and recharge timers
-- Spell validation and execution
-- Rune lifecycle management (placement, delay, triggering, combinations)
-- Deck building and curse system
-- Player customization options
+- 26-element system (cube/octahedron structure) with component-level cancellation
+- 6-flower mana economy (individual tracking, 3-turn recharge, 2:1 conversion)
+- Slot/pool casting interface (cast/load/refresh actions with universal cooldown)
+- Abstract spell shapes (geometric primitives evaluated in GPU shaders)
+- Rune lifecycle (GPU delay counters, triggering, combination, cleanup)
+- Deck building (singleton format, infinite reshuffle, minimum size 6×pools)
+- Curse system (TBD)
 
-**Dependencies**: Core Engine (for rune placement)
+**Dependencies**: Core Engine (rune layer texture), Physics Engine (force application)
 
-**Processing**: Initially chosen for CPU because it handles direct player input. This choice may be revisited during implementation.
+**Processing**: GPU compute shaders for shape evaluation, element combination, and rune lifecycle
 
 ### Physics Engine Module
 **Purpose**: GPU-accelerated tile movement and collision simulation.
 
 **Responsibilities**:
-- Velocity-based tile movement
-- Collision detection and response
-- Force application from runes and environment
+- Free-form movement with fixed-precision Vector2 velocities
+- **Mass-based collision physics** with momentum transfer
+- Cohesion forces for natural tile clustering (1.5 block radius, 5×5 neighborhood)
+- Multi-pass collision resolution for deterministic results
+- Sub-grid positioning with integer fixed-point arithmetic
 - Layer interaction physics (falling, bouncing)
 
 **Dependencies**: Core Engine (texture coordination)
 
 **Processing**: GPU compute shaders with hardcoded physics rules
 
-**Note**: Frame rate coordination approach proposed in [cross-reference:: [[data-flow|data-flow.md]]] - implementation and effectiveness TBD
+**Note**: ~~Frame rate coordination approach proposed in [cross-reference:: [[data-flow|data-flow.md]]] - implementation and effectiveness TBD~~ **⚠️ data-flow.md is outdated**
 
 ### Reaction Engine Module
 **Purpose**: Rule-based environmental transformations.
@@ -137,9 +149,9 @@ See [cross-reference:: [[gameplay|gameplay mechanics]]] for complete gameplay me
 
 **World Size**: Fixed at initialization (no dynamic streaming)
 
-**Mana Types**: 8 maximum (player state buffer constraint)
+**Flower Types**: 6 (matching base elements)
 
-**Spell Hand**: Size TBD based on UI and gameplay needs
+**Casting Slots/Pools**: Count TBD through playtesting (using 4 as example)
 
 ### Risk Mitigation
 **Performance Degradation**: Automated benchmarks prevent optimization regressions

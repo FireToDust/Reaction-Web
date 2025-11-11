@@ -1,81 +1,75 @@
+---
+status: approved
+tags:
+  - Architecture
+warnings:
+  - "[outdated] All fire/water/earth/air references removed - replaced with 6-element system"
+todo:
+  - "[discussion] Flower recharge timing balance - 3-turn cycle interaction with action cooldown"
+---
+
 # Mana System
 
-## Purpose and Design Goals
+Resource economy based on 6 elemental flower types with individual flower tracking and strategic conversion mechanics.
 
-**Purpose**: Create resource allocation decisions without resource scarcity pressure.
+## Flower Types
 
-**Philosophy**: Focus on timing and positioning over resource conservation.
+**6 Base Element Flowers**: Each flower type corresponds to a base element from [cross-reference:: [[element-system|Element System]]]:
 
-## Player Resources
+- **Order Flowers**
+- **Chaos Flowers**
+- **Creation Flowers**
+- **Destruction Flowers**
+- **Spirit Flowers**
+- **Form Flowers**
 
-### Mana Flower System
-**Purpose**: Create resource allocation decisions.
+**Default Allocation**: 3 of each type (18 total)
 
-**Mechanics**:
-- Default: 3 flowers per mana type (fire, water, earth, air)
-- Recharge: 3 non-stunned turns to restore after use (balances spell casting incentive vs saving)
-- Strategy: Specialization vs. flexibility trade-offs
+**Individual Tracking**: Each flower has independent recharge state and cooldown.
 
-### Spell Hand Management
-- **Hand Size**: TBD based on UI and gameplay needs
-- **Replenishment**: Draw from personal spell deck each turn
-- **Deck Construction**: Pre-game selection from available spells
+## Recharge Mechanics
 
-## Spell Mechanics
+**Duration**: 3 turns per flower
 
-### Casting Process
-1. **Selection**: Player chooses spell from hand
-2. **Validation**: Check mana cost and target range
-3. **Execution**: Place runes according to spell pattern
-4. **Cost**: Exhaust required mana flowers
-5. **Cooldown**: Start mana flower recharge timers
+**Individual Cooldowns**: Each flower tracks its own timer independently.
 
-### Spell Properties
-- **Mana Cost**: Specific mana types and quantities required
-- **Range**: Maximum targeting distance from caster
-- **Pattern**: Grid layout of runes placed around target
-- **Effects**: Rune types, forces, and delays in pattern
+**Recharge Behavior**:
+- ✅ Cast spell: Flowers recharge normally
+- ✅ Load spell: Flowers recharge normally
+- ✅ Movement: Flowers recharge normally
+- ❌ Refresh pools: Flowers do NOT recharge (strategic penalty)
 
-## Rune System
+**Unlimited Regeneration**: Flowers always regenerate. Never permanently lost during match.
 
-### Rune Properties
-- **Type**: Determines transformation effects (fire, ice, force, etc.)
-- **Force**: Velocity applied when triggered
-- **Delay**: Countdown timer before activation
+## Spell Costs
 
-### Rune Lifecycle
-1. **Placement**: Created by spell casting
-2. **Delay**: Countdown each CPU processing cycle
-3. **Triggering**: Apply transformations and forces when delay reaches zero
-4. **Combination**: Merge with other runes on same tile
-5. **Removal**: Clean up spent runes
+**Flexible Costs**: Spells require specific combinations and quantities of flower types.
 
-### Rune Interactions
-**Purpose**: Create emergent spell combinations.
+**Examples**:
+- Basic Fire spell: 1 Chaos + 1 Creation
+- Powerful Fire spell: 3 Chaos + 2 Creation
+- Life spell: 1 Order + 1 Creation + 1 Spirit
 
-**Mechanics**:
-- Multiple runes on same tile combine automatically
-- Result has combined force and minimum delay
-- Type determined by combination rules table
-- Some combinations cancel forces or produce no rune
+**Validation**: All required flowers must be available (not recharging) to cast spell.
 
-## Customization Systems
+**Cost-Power Relationship**: Higher costs = more powerful spells. Specific costs TBD through playtesting.
 
-### Curse System
-**Purpose**: Power vs. risk trade-offs.
+## Flower Conversion
 
-**Balance Philosophy**: Pure builds viable but less interesting than cursed builds.
+**When**: During deck building phase (before match starts)
 
-**Example Curses**:
-- **Glass Cannon**: +50% spell damage, -50% health
-- **Mana Leak**: -1 mana cost, 20% spell failure rate
-- **Berserker**: +2 spell range when below 25% health, -1 max health
+**Operation**: Lose 2 flowers → gain 1 flower of chosen type
 
-### Deck Building
-- **Collection**: Players build from available spell library
-- **Constraints**: Deck size limits encourage focused strategies
-- **Synergies**: Spells designed to work together thematically
+**Irreversible**: Conversion affects starting flower configuration for that match.
 
-## Processing Architecture
+**Purpose**: Specialize flower distribution to match deck element composition.
 
-**CPU-Only Design**: See [../../architecture/technical-decisions.md](../../architecture/technical-decisions.md) for architecture rationale and integration details.
+**Trade-off**: Increased element focus at cost of total capacity and flexibility.
+
+## Related Systems
+
+[cross-reference:: [[element-system|Element System]]] - Spell costs require combinations matching element structure (dual elements = 2 flower types, triple elements = 3 flower types)
+
+[cross-reference:: [[spells-and-runes|Spells and Runes]]] - Refresh action uniquely prevents flower recharge during cooldown
+
+[cross-reference:: [[deck-building|Deck Building]]] - Flower conversion configured during deck construction

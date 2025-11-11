@@ -1,3 +1,8 @@
+---
+warnings:
+  - "[outdated] Active region optimization section updated - system not being implemented"
+---
+
 # Network Protocol
 
 WebSocket-based communication protocol with optimized state synchronization and delta compression.
@@ -85,11 +90,11 @@ interface FullStateSnapshot {
 **Bit-Packing Efficiency**: Leverage existing 32-bit tile format
 **Estimated Savings**: 90% bandwidth reduction vs full state
 
-### Active Region Optimization
-**Chunk-Based Updates**: Leverage 32×32 active region system
-**Spatial Compression**: Group changes by geographic proximity
-**Activity Propagation**: Automatic chunk activation/deactivation
-**Bandwidth Scaling**: Linear with activity level, not world size
+### ~~Active Region Optimization~~ (System Not Implemented)
+**⚠️ NOT IMPLEMENTED**: Active region system was decided against. Network optimization uses alternative strategies:
+- **Spatial Compression**: Group changes by geographic proximity
+- **Change Detection**: Only transmit modified tiles
+- **Bandwidth Scaling**: Optimized through efficient delta compression
 
 ### Payload Compression
 **LZ4 Algorithm**: Fast compression/decompression for real-time use

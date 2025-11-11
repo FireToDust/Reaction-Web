@@ -1,245 +1,398 @@
+---
+status: proposed
+tags:
+  - Implementation
+todo:
+  - "[implementation] Implement overlap pass scatter-gather algorithm for combinations"
+  - "[implementation] Optimize workgroup shared memory for hex neighborhoods"
+  - "[implementation] Determine optimal workgroup size through profiling"
+---
+
 # GPU Shader Architecture
 
-Multi-pass compute shader pipeline for collision detection and resolution.
+Multi-pass GPU compute pipeline for force-based physics with combination mechanics on a hexagonal grid.
 
 ## Pipeline Overview
 
-The physics system uses a sequence of compute shader passes to resolve collisions deterministically:
+The physics system uses a sequence of GPU compute passes to update object positions and handle combinations:
 
-1. **Velocity Setting Pass**: Process spell inputs and update tile velocities
-2. **Collision Detection Pass**: Calculate initial collision paths
-3. **Iterative Resolution Passes**: Refine collision paths through multiple iterations  
-4. **Final Execution Pass**: Execute movements and handle conflicts
+1. **Apply Forces + Move**: Calculate and apply all forces, update velocities and sub-grid offsets
+2. **Overlap Passes (2-N)**: Detect and merge objects that are too close
+3. **Set Grid Position**: Update hex cell assignments based on final offsets
 
-## Compute Shader Structure
+## Pass 1: Apply Forces + Move
 
-### Pass 1: Velocity Setting Shader
+### Overview
+
+**Purpose**: Apply collision, cohesion, and spell forces; update velocity and sub-grid offset.
+
+**Grid Position Preserved**: Objects remain in their current hex cell until final pass.
+
+**Neighbor Range**: Check two-layer hexagonal neighborhood for force interactions.
+
+### Shader Structure
+
 ```wgsl
 @compute @workgroup_size(8, 8)
-fn velocity_setting_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let world_coord = calculate_world_coord(global_id);
-    
-    // Read current tile and spell inputs
-    let current_tile = read_tile(world_coord);
-    let spell_inputs = read_spell_velocity_changes(world_coord);
-    
-    // Apply velocity modifications
-    let updated_tile = apply_velocity_changes(current_tile, spell_inputs);
-    
-    write_tile(world_coord, updated_tile);
-}
-```
+fn apply_forces_and_move(
+    @builtin(global_invocation_id) global_id: vec3<u32>,
+    @builtin(local_invocation_id) local_id: vec3<u32>
+) {
+    let hex_coord = calculate_hex_coord(global_id);
+    let object = read_object(hex_coord);
 
-### Pass 2: Initial Collision Detection Shader
-```wgsl
-@compute @workgroup_size(8, 8)
-fn collision_detection_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let world_coord = calculate_world_coord(global_id);
-    let current_tile = read_tile(world_coord);
-    
-    if (!has_velocity(current_tile)) {
-        return; // Skip stationary tiles in initial pass
-    }
-    
-    // Load neighborhood into workgroup shared memory
-    let neighborhood = load_neighborhood(world_coord, 7); // 7x7 for moving tiles
-    
-    // Calculate collision paths
-    let collision_result = calculate_minimum_collision_time(current_tile, neighborhood);
-    
-    // Store collision path and timing
-    write_collision_path(world_coord, collision_result);
-}
-```
-
-### Pass 3+: Iterative Resolution Shaders
-```wgsl
-@compute @workgroup_size(8, 8)  
-fn iterative_resolution_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let world_coord = calculate_world_coord(global_id);
-    let current_tile = read_tile(world_coord);
-    
-    // Load neighborhood with updated collision paths
-    let neighborhood = load_neighborhood_with_paths(world_coord);
-    
-    // Recalculate collision assuming neighbors follow their stored paths
-    let updated_collision = recalculate_collision_with_paths(current_tile, neighborhood);
-    
-    // Update collision path if changed
-    if (path_changed(updated_collision)) {
-        write_collision_path(world_coord, updated_collision);
-        mark_convergence_flag(false);
-    }
-}
-```
-
-### Final Pass: Execution Shader
-```wgsl
-@compute @workgroup_size(8, 8)
-fn execution_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let world_coord = calculate_world_coord(global_id);
-    let current_tile = read_tile(world_coord);
-    let collision_path = read_collision_path(world_coord);
-    
-    // Check for convergence - would another pass change the result?
-    if (would_collision_change(current_tile, collision_path)) {
-        // Write error tile for non-convergent scenario
-        write_error_tile(world_coord);
+    if (!object.exists) {
         return;
     }
-    
-    // Execute collision resolution
-    let final_position = collision_path.final_position;
-    let collision_events = collision_path.events;
-    
-    // Atomic write to destination (handles conflicts)
-    if (!atomic_write_tile(final_position, current_tile)) {
-        // Conflict detected - write error tile
-        write_error_tile(world_coord);
-    }
-    
-    // Write collision events for renderer
-    write_collision_events(collision_events);
+
+    // Load two-layer hex neighborhood into shared memory
+    load_hex_neighborhood_to_cache(hex_coord, local_id);
+    workgroupBarrier();
+
+    // Accumulate forces from neighbors
+    var total_force = vec2<i32>(0, 0); // Fixed-point
+
+    // Collision forces (from overlapping objects)
+    total_force += calculate_collision_forces(object, neighborhood_cache);
+
+    // Cohesion forces (from nearby objects within radius)
+    total_force += calculate_cohesion_forces(object, neighborhood_cache);
+
+    // Spell forces (from overlapping spell shapes)
+    total_force += calculate_spell_forces(object, spell_buffer);
+
+    // Update velocity (F = ma, so a = F/m)
+    let acceleration = fixed_point_divide(total_force, object.mass);
+    object.velocity = fixed_point_add(object.velocity, acceleration);
+
+    // Clamp velocity to maximum
+    object.velocity = clamp_velocity(object.velocity, MAX_VELOCITY);
+
+    // Update sub-grid offset (don't change hex cell assignment yet)
+    object.offset = fixed_point_add(object.offset, object.velocity);
+
+    write_object(hex_coord, object);
 }
 ```
+
+### Force Calculations
+
+**Collision Forces**: For each overlapping neighbor, calculate repulsion force based on overlap distance and mass.
+
+**Cohesion Forces**: For neighbors within cohesion radius, calculate attraction force toward group centroid.
+
+**Spell Forces**: Check spell buffer for overlapping spell shapes; apply impulses or set velocities based on element type.
+
+**Details**: See [cross-reference:: [[forces|Forces]]] for force formulas and mechanics.
+
+## Pass 2-N: Overlap Passes
+
+### Overview
+
+**Purpose**: Detect objects closer than combination distance d; merge them into single objects.
+
+**Scatter-Gather**: Complex algorithm to identify and merge groups of nearby objects.
+
+**Multiple Passes**: May require several passes to fully resolve cascading combinations.
+
+**⚠️ NEEDS SPECIFICATION**: Exact scatter-gather implementation approach TBD.
+
+### Shader Structure
+
+```wgsl
+@compute @workgroup_size(8, 8)
+fn overlap_detection_pass(
+    @builtin(global_invocation_id) global_id: vec3<u32>,
+    @builtin(local_invocation_id) local_id: vec3<u32>
+) {
+    let hex_coord = calculate_hex_coord(global_id);
+    let object = read_object(hex_coord);
+
+    if (!object.exists) {
+        return;
+    }
+
+    // Load two-layer hex neighborhood
+    load_hex_neighborhood_to_cache(hex_coord, local_id);
+    workgroupBarrier();
+
+    // Find all objects within combination distance d
+    var nearby_objects = find_objects_within_distance(object, neighborhood_cache, COMBINATION_DISTANCE);
+
+    if (nearby_objects.count > 0) {
+        // Mark for combination
+        // TODO: Implement scatter-gather algorithm
+        // - Assign combination group ID
+        // - Calculate combined properties (mass-averaged velocity, centroid position)
+        // - Apply reaction rules for type transformation
+        // - Write combined object, mark merged objects for deletion
+    }
+}
+```
+
+### Combination Process
+
+**Distance Check**: Calculate distance between object centers; trigger if < d.
+
+**Group Formation**: All objects within d of combined center merge together.
+
+**Property Calculation**:
+- Velocity: Mass-weighted average of all merged objects
+- Position: Mass-weighted centroid
+- Type: Determined by reaction rules (see [cross-reference:: [[reactions|Reaction System]]])
+- Mass: Based on new type
+
+**Atomic Operations**: Use atomics to prevent race conditions when multiple groups overlap.
+
+## Final Pass: Set Grid Position
+
+### Overview
+
+**Purpose**: Update which hex cell each object occupies based on its final sub-grid offset.
+
+**Boundary Wrapping**: Handle objects that have moved across world edges.
+
+**Spatial Indexing**: Ensure objects are correctly indexed for next frame's neighbor queries.
+
+### Shader Structure
+
+```wgsl
+@compute @workgroup_size(8, 8)
+fn set_grid_position(
+    @builtin(global_invocation_id) global_id: vec3<u32>
+) {
+    let hex_coord = calculate_hex_coord(global_id);
+    let object = read_object(hex_coord);
+
+    if (!object.exists) {
+        return;
+    }
+
+    // Calculate new hex cell based on offset
+    let new_hex_coord = calculate_hex_from_offset(hex_coord, object.offset);
+
+    // Normalize offset relative to new cell center
+    let normalized_offset = normalize_offset_to_cell(object.offset, new_hex_coord);
+
+    // Handle world wrapping
+    let wrapped_coord = wrap_hex_coordinate(new_hex_coord);
+
+    if (wrapped_coord != hex_coord) {
+        // Object moved to new cell - relocate it
+        object.offset = normalized_offset;
+        atomic_write_object(wrapped_coord, object);
+        delete_object(hex_coord);
+    } else {
+        // Object stayed in same cell - just update offset
+        object.offset = normalized_offset;
+        write_object(hex_coord, object);
+    }
+}
+```
+
+## Hexagonal Grid Algorithms
+
+### Polar/Cube Coordinates
+
+**Coordinate System**: Use cube coordinates (q, r, s) where q + r + s = 0.
+
+**Neighbor Lookup**: Efficient neighbor calculation using coordinate offsets.
+
+**Point-to-Hex**: Convert Cartesian (x, y) position to hex coordinates using cube algorithm.
+
+### Skewed Parallelogram Storage
+
+**GPU Layout**: Grid stored as skewed parallelogram in texture memory.
+
+**Rectangular Indexing**: Standard 2D texture coordinates map to hex cells.
+
+**Wrapped Boundaries**: World edges wrap seamlessly for continuous circular world.
+
+### Two-Layer Neighborhood
+
+**Layer Definition**: Objects check 19 hex cells (center + 6 immediate + 12 second-layer).
+
+**Shared Memory Size**: 19 objects fit efficiently in workgroup shared memory.
+
+**Coordinate Calculation**: Precompute neighbor offsets for each hex layer.
 
 ## Workgroup Architecture
 
-### Memory Management
-**Shared Memory Caching**: Each workgroup loads neighborhood data into local memory.
+### Shared Memory Caching
 
-**Cache Size**: 7×7 neighborhood fits within workgroup shared memory limits.
+**Purpose**: Load neighborhood data once per workgroup to minimize texture reads.
 
-**Synchronization**: Workgroup barriers ensure data consistency across threads.
+**Cache Size**: 19 hex cells × object data size (position, velocity, type, mass).
 
-### Workgroup Organization
+**Synchronization**: Workgroup barriers ensure all threads see cached data.
+
 ```wgsl
-// Workgroup shared memory for neighborhood caching
-var<workgroup> neighborhood_cache: array<array<TileData, 7>, 7>;
+// Workgroup shared memory for hex neighborhood
+var<workgroup> neighborhood_cache: array<ObjectData, 19>;
 var<workgroup> cache_loaded: bool;
 
-@compute @workgroup_size(8, 8)
-fn collision_pass(@builtin(global_invocation_id) global_id: vec3<u32>,
-                  @builtin(local_invocation_id) local_id: vec3<u32>) {
-    
-    // First thread in workgroup loads neighborhood
+fn load_hex_neighborhood_to_cache(
+    center_hex: vec2<i32>,
+    local_id: vec3<u32>
+) {
+    // First thread loads all 19 neighbors
     if (local_id.x == 0 && local_id.y == 0) {
-        load_neighborhood_to_cache();
+        for (var i = 0; i < 19; i++) {
+            let neighbor_hex = center_hex + HEX_NEIGHBOR_OFFSETS[i];
+            neighborhood_cache[i] = read_object(neighbor_hex);
+        }
         cache_loaded = true;
     }
-    
-    workgroupBarrier();
-    
-    // All threads process using cached data
-    process_tile_with_cached_neighborhood(global_id, local_id);
 }
 ```
 
-## Memory Access Patterns
+### Workgroup Size
 
-### Texture Ping-Ponging
-**Read Phase**: Sample from texture set A (stable data from previous frame).
+**Current Choice**: 8×8 workgroups (64 threads).
 
-**Write Phase**: Output to texture set B (prevents read-after-write hazards).
+**Rationale**: Balance between GPU occupancy and shared memory usage.
 
-**Buffer Swapping**: Core engine swaps texture sets between physics ticks.
+**⚠️ NEEDS TUNING**: Optimal workgroup size TBD through GPU profiling.
 
-### Neighborhood Access
-**Dynamic Sizing**: Calculate required neighborhood based on tile velocity and offset.
+## Data Structures
 
-**Boundary Handling**: World wrapping for neighborhoods that extend beyond edges.
+### Object Physics Data
 
-**Memory Coalescing**: Thread groups access contiguous texture regions for GPU cache efficiency.
-
-## Deterministic Execution
-
-### Convergence-Based Determinism
-**Iterative Resolution**: Determinism achieved through multi-pass convergence rather than processing order.
-
-**Consistent Results**: Same collision scenarios produce identical outcomes across runs and platforms.
-
-**Atomic Operations**: GPU atomics ensure consistent conflict resolution when multiple tiles target same location.
-
-### Precision Control
+**GPU Texture Layout**:
 ```wgsl
-// Integer-only collision time calculation
-fn calculate_collision_time(tile_a: TileData, tile_b: TileData) -> u32 {
-    // Use fixed-point arithmetic to avoid floating-point drift
-    let relative_velocity = tile_a.velocity - tile_b.velocity;
-    let distance = tile_a.position - tile_b.position;
-    
-    // Integer division with proper rounding
-    return fixed_point_divide(distance, relative_velocity);
+struct ObjectData {
+    // Position (12 bytes)
+    hex_coord: vec2<i32>,      // 8 bytes - hex cell coordinates
+    offset: vec2<i32>,         // 8 bytes - fixed-point offset from cell center
+
+    // Velocity (8 bytes)
+    velocity: vec2<i32>,       // 8 bytes - fixed-point velocity vector
+
+    // Properties (8 bytes)
+    type_id: u32,              // 4 bytes - object type
+    mass: u32,                 // 4 bytes - mass (or could be computed from type)
+
+    // Flags (4 bytes)
+    layer: u32,                // 4 bytes - Ground/Object/Air (could be packed)
+    exists: bool,              // 1 byte - object exists flag
+    // ... potential padding or additional flags
+}
+// Total: ~32 bytes per object (may be optimized with bit-packing)
+```
+
+**Memory Packing**: Consider bit-packing to reduce texture memory and bandwidth.
+
+### Spell Buffer
+
+**Structure**: Array of active spell shapes in GPU buffer.
+
+**Data Per Spell**:
+- Shape geometry (circle, rectangle, etc.)
+- Position and radius
+- Element type(s)
+- Cast time (for element combination ordering)
+- Force magnitude/velocity value
+
+**Spatial Partitioning**: Future optimization to limit spell checks per object.
+
+## Fixed-Point Arithmetic
+
+### Determinism Guarantee
+
+**Integer-Only Operations**: All physics calculations use fixed-point (scaled integers).
+
+**Platform Independence**: Avoids floating-point precision differences across GPUs.
+
+**Bit Precision**: Balance accuracy vs overflow risk (e.g., 16.16 fixed-point).
+
+**Details**: See [cross-reference:: [[determinism|Determinism]]] for implementation.
+
+### Example Operations
+
+```wgsl
+// Fixed-point addition (trivial)
+fn fixed_point_add(a: vec2<i32>, b: vec2<i32>) -> vec2<i32> {
+    return a + b;
+}
+
+// Fixed-point multiplication (scale factor = 2^16)
+fn fixed_point_multiply(a: i32, b: i32) -> i32 {
+    return (i64(a) * i64(b)) >> 16;
+}
+
+// Fixed-point division
+fn fixed_point_divide(numerator: i32, denominator: i32) -> i32 {
+    return (i64(numerator) << 16) / i64(denominator);
 }
 ```
 
 ## Performance Optimizations
 
 ### Early Termination
-**Convergence Detection**: Global flag indicates when no collision paths change.
 
-**Pass Skipping**: Skip remaining iterative passes when convergence reached.
+**Stationary Objects**: Skip force calculations for objects with zero velocity and no nearby activity.
 
-**Implementation**: Atomic flag updated by any thread that changes a collision path.
+**Convergence Detection**: In overlap passes, terminate early if no combinations triggered.
 
-### Memory Bandwidth Optimization
-**Bit-Packed Data**: Compress tile data to minimize texture memory usage.
+**Pass Skipping**: Skip remaining overlap passes once no objects need merging.
 
-**Coalesced Access**: Align memory access patterns with GPU architecture.
+### Memory Bandwidth
 
-**Cache Optimization**: Structure data layout for optimal GPU cache utilization.
+**Coalesced Access**: Threads in workgroup access contiguous memory locations.
 
-### Dynamic Dispatch
-**Active Region Processing**: Only dispatch shaders for chunks containing moving tiles.
+**Texture Cache**: Structure data layout for optimal GPU cache utilization.
 
-**Indirect Compute**: Use indirect dispatch for dynamic workload sizing.
+**Bit-Packing**: Compress object data to minimize texture memory bandwidth.
 
-**Workgroup Scaling**: Adjust workgroup count based on active tile density.
+### Atomic Operations
+
+**Combination Conflicts**: Use atomic operations when multiple objects try to merge.
+
+**Cell Relocation**: Atomic writes when moving objects to new hex cells.
+
+**Flag Updates**: Atomic flags for convergence detection across workgroups.
 
 ## Integration Points
 
-### Core Engine Integration
-**Texture Management**: Coordinate with core engine texture ping-ponging system.
+### Movement System
+- Pipeline implements movement, velocity, and combination mechanics
+- See [cross-reference:: [[movement-system|Movement System]]] for conceptual details
 
-**Active Chunks**: Receive list of active chunks to focus processing.
+### Forces
+- Force calculation details and formulas
+- See [cross-reference:: [[forces|Forces]]] for force types and equations
 
-**Resource Sharing**: Share GPU resources with other compute systems.
+### Spell System
+- Spell buffer provides force input
+- Objects check for overlapping spell shapes
+- See [cross-reference:: [[spells|Spell System]]] for spell mechanics
 
-### Event Buffer Management
-**Collision Events**: Write collision timing and results to structured buffer.
+### Reaction System
+- Combination type transformations use reaction rules
+- See [cross-reference:: [[reactions|Reaction System]]] for transformation rules
 
-**Renderer Integration**: Format events for efficient renderer consumption.
+## Shader Development
 
-**Memory Layout**: Optimize event buffer layout for sequential access patterns.
+### WGSL Implementation
 
-## Shader Compilation Pipeline
+**Language**: WebGPU Shading Language (WGSL).
 
-### Build Process
-**WGSL Source**: Write shaders in WebGPU Shading Language.
+**Compilation**: Shaders compiled at runtime by WebGPU driver.
 
-**Compilation**: Compile shaders during build process for validation.
+**Validation**: Browser provides shader compilation errors during development.
 
-**Hot Reload**: Development builds support shader hot-reloading.
+### Hot Reloading
 
-### Error Handling
-**Compilation Failures**: Graceful handling of shader compilation errors.
+**Development Mode**: Support shader hot-reloading for rapid iteration.
 
-**Runtime Validation**: Verify shader resources and binding compatibility.
+**Error Handling**: Graceful fallback when shader compilation fails.
 
-**Fallback Behavior**: Default error handling for GPU context loss.
+**Debugging**: Use browser GPU debugging tools for shader profiling.
 
-## Performance Characteristics
+### Performance Profiling
 
-### Scalability Considerations
-**Pass Limiting**: Configurable maximum iteration count prevents infinite loops.
+**GPU Timers**: Measure individual pass execution times.
 
-**Memory Bandwidth**: Texture access patterns optimized for GPU memory hierarchy.
+**Bandwidth Monitoring**: Track texture read/write operations.
 
-**Compute Utilization**: Workgroup sizing balanced for GPU architecture efficiency.
-
-### Bottleneck Identification
-**GPU Utilization**: Monitor compute shader execution timing.
-
-**Memory Bandwidth**: Track texture access patterns and cache hit rates.
-
-**Convergence Speed**: Measure average iterations needed for collision resolution.
+**Workgroup Tuning**: Profile different workgroup sizes for optimal performance.

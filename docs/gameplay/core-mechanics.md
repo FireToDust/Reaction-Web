@@ -1,3 +1,9 @@
+---
+todo:
+  - "[discussion] Confirm healing mechanics approach (no healing vs tile-based healing zones)"
+  - "[discussion] Map size constraints for optimal performance"
+---
+
 # Core Mechanics
 
 ## Core Game Flow
@@ -76,13 +82,38 @@
 
 ### Core Strategy Sources
 1. **Terrain Understanding**: Learning different tile type behaviors
-2. **Spell Combinations**: Combining rune effects  
+2. **Spell Combinations**: Combining rune effects
 3. **Positioning**: Tactical movement and area control
 4. **Timing**: Execution of pre-planned actions at optimal moments
 5. **Environmental Prediction**: Anticipating world changes and terrain evolution
+
+### Spell System Strategy
+
+See [cross-reference:: [[../architecture/systems/spells/spells|Spell System]]] for complete spell mechanics.
+
+**Element Mastery**:
+- Understanding 26 elements and geometric opposition structure
+- Recognizing cancellation opportunities (complete, partial, Void)
+- Defensive counter-element selection against opponents
+
+**Resource Management**:
+- Mana flower spending patterns with 3-turn recharge cycles
+- Action cooldown timing (cast/load/refresh decisions)
+- Refresh action strategic use (tempo cost for pool cycling)
+
+**Deck Construction**:
+- Pre-match element focus vs diverse coverage decisions
+- Mana flower conversion optimization (2:1 trade-off)
+- Singleton format encourages spell variety strategies
+
+**Tactical Execution**:
+- Slot/pool management (when to cast vs load)
+- Directional targeting precision
+- Rune overlap timing for combinations
 
 ### Depth Mechanisms
 - **Rule Interactions**: Complex behaviors arising from rule combinations
 - **Adaptive Strategy**: Changing world state requires flexible tactical adaptation
 - **Risk/Reward**: Curse system and aggressive positioning create choices
 - **Long-term Planning**: Pre-planning system rewards strategic foresight
+- **Element Counter-Play**: Geometric opposition creates natural counter-strategies

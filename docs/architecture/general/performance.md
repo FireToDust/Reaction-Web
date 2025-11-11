@@ -1,3 +1,12 @@
+---
+warnings:
+  - "[outdated] Active Region System section describes system that is NOT being implemented"
+  - "[outdated] 32×32 chunk references throughout document"
+todo:
+  - "[documentation] Rewrite performance strategy without active regions"
+  - "[discussion] Alternative optimization approaches without active regions"
+---
+
 # Performance Strategy
 
 Optimization approaches and technical constraints for tile processing performance.
@@ -8,24 +17,26 @@ Optimization approaches and technical constraints for tile processing performanc
 
 **General Goals**:
 - Support many active tiles simultaneously
-- Performance should scale with activity level rather than world size
+- Performance should scale reasonably with world activity
 
 ## Optimization Systems
 
-### Active Region System
-**Purpose**: Avoid processing static regions to maintain performance.
+### ~~Active Region System~~ (NOT IMPLEMENTED)
+**⚠️ NOT IMPLEMENTED**: Active region optimization was decided against - implementation deemed too complex for expected benefit. Team is planning for relatively few dormant areas instead.
 
-**Implementation**:
+~~**Purpose**: Avoid processing static regions to maintain performance.~~
+
+~~**Implementation**:
 - Divide world into 32×32 tile chunks (chosen to balance GPU workgroup efficiency with memory overhead)
 - Track chunks with active tiles in GPU buffer
 - Shaders only process listed active chunks
 - Activity propagates to neighboring chunks automatically
-- Dormant regions have minimal GPU cost
+- Dormant regions have minimal GPU cost~~
 
-**Benefits**:
+~~**Benefits**:
 - Automatic scaling with activity level
 - Efficient memory bandwidth usage
-- Reduced compute shader dispatches
+- Reduced compute shader dispatches~~
 
 ### Texture-Based Storage
 **GPU Cache Optimization**: Leverage 2D data access patterns for efficient memory reads

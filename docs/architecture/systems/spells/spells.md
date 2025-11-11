@@ -1,61 +1,68 @@
 ---
+status: approved
 tags:
   - Navigation
+warnings:
+  - "[outdated] Previously mentioned CPU-only design - now fully GPU-accelerated"
 ---
 
 # Spell System
 
-Player-controlled spellcasting, mana management, and rune interactions.
+GPU-accelerated spellcasting with 26-element magic system, mana flower economy, slot/pool casting interface, and deck customization.
 
 ## System Overview
 
-Player-controlled spellcasting with resource management and rune interactions.
+Player-controlled spellcasting creates runes on the game world through geometric element combinations, resource management, and strategic deck building.
 
-**Design Goal**: CPU-based processing allows flexible spell logic without GPU shader constraints.
+**Processing**: Fully GPU-accelerated (shape evaluation, element combination, rune lifecycle)
 
-## Core Responsibilities
-
-- **Mana flower economy** and recharge timers
-- **Spell validation** and execution
-- **Rune lifecycle management** (placement, delay, triggering, combinations)
-- **Deck building** and curse system
-- **Player customization** options
+**Core Systems**: Elements (26), Mana (6 flowers), Casting (slot/pool), Runes (lifecycle), Deck Building (singleton)
 
 ## Navigation
 
 ### Core Components
-- [**Mana System**](mana-system.md) - Flower economy and recharge mechanics
-- [**Spells and Runes**](spells-and-runes.md) - Casting mechanics and rune lifecycle
-- [**Customization**](customization.md) - Deck building and curse system
-- [**CPU Architecture**](cpu-architecture.md) - Processing model and integration
 
-## Key Mechanics
+- [[element-system|Element System]] - 26 elements in cube/octahedron structure
+- [[mana-system|Mana System]] - 6 flower types with recharge and conversion
+- [[spells-and-runes|Spells and Runes]] - Casting interface and rune lifecycle
+- [[deck-building|Deck Building]] - Deck rules and pre-match construction
+- [[customization|Customization]] - Curse system and build options
+- ~~[[cpu-architecture|CPU Architecture]]~~ - Outdated, system now GPU-accelerated
 
-See individual component documentation for detailed mechanics:
-- [Mana System](mana-system.md) - Resource management and recharge cycles
-- [Spells and Runes](spells-and-runes.md) - Casting mechanics and rune interactions
+### Related Systems
 
-## Customization Features
+- [cross-reference:: [[../physics/physics|Physics System]]] - Force application from triggered runes
+- [cross-reference:: [[../core/core|Core Engine]]] - Texture management and layer coordination
+- [cross-reference:: [[../reactions/reactions|Reaction System]]] - Environmental interactions
 
-### Deck Building
-- **Pre-game Selection**: Choose spells from available collection
-- **Deck Constraints**: ⚠️ **NEEDS DISCUSSION** - Specific deck building rules TBD
-- **Spell Relationships**: ⚠️ **SUGGESTION** - Consider thematic spell interactions
+## Integration Points
 
-### Curse System
-- **Risk/Reward**: Power vs. risk trade-offs
-- **Build Balance**: ⚠️ **NEEDS DISCUSSION** - Balance between pure and cursed builds
-- **Implementation**: ⚠️ **NEEDS DESIGN** - Specific curse mechanics and effects
+**Physics Engine**: Triggered runes apply force vectors to physics layer. Independent tick rates coordinate timing.
 
-## Processing Model
+**Core Engine**: Manages rune layer texture for GPU processing.
 
-**CPU-Only Design**: See [cross-reference:: [[technical-decisions]]] for processing architecture rationale.
+**Reaction Engine**: Runes can trigger environmental transformation rules.
 
-### Integration Points
-- **Core Engine**: Direct texture writes to rune layer [Key:: Value]
-- **Physics Engine**: Queue forces for tile movement
-- **Player Input**: Immediate response to spell casting actions
+**UI System**: Displays casting slots/pools, mana flower availability, targeting overlay, and deck builder interface.
 
-## Dependencies
-- **Core Engine**: Required for rune placement and tile data access
-- **User Interface**: Integration with spell hand and mana flower display
+## Implementation Status
+
+**Documented**:
+- Element system (26 elements, cancellation rules)
+- Mana system (6 flowers, recharge, conversion)
+- Casting interface (slot/pool, actions, cooldown)
+- Rune lifecycle (placement, delay, trigger, combination)
+- Deck building rules (minimum size, singleton, reshuffle)
+
+**Needs Design**:
+- Specific spell shape primitives
+- Void rune effects
+- Single element rune additional effects
+- Curse system mechanics
+- Spell acquisition/progression system
+- Line of sight obstruction rules
+- Number of casting slots/pools
+
+---
+
+**Entry Point**: Start with [[element-system|Element System]] to understand the foundational magic structure.

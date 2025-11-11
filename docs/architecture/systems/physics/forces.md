@@ -1,174 +1,194 @@
-# Velocity System
+---
+status: proposed
+tags:
+  - Architecture
+  - Implementation
+todo:
+  - "[implementation] Determine collision force formulas through playtesting"
+  - "[implementation] Determine cohesion force formulas and radius through playtesting"
+  - "[discussion] Define which spell elements use impulses vs velocity setting"
+---
 
-Spell-driven velocity changes and directional movement constraints.
+# Forces
 
-## System Overview
+Force mechanics for collision repulsion, cohesion attraction, and spell-driven movement.
 
-**Velocity Model**: Discrete directional movement (8 directions) with bit-packed representation.
+## Overview
 
-**Input Source**: Spell system provides velocity change requests processed in the velocity setting pass.
+Forces modify object velocities each frame, creating realistic physics interactions. All forces operate within the two-layer hexagonal neighborhood range, ensuring objects can respond before collisions become problematic.
 
-**Movement Constraints**: No traditional forces - tiles move in grid-aligned directions only.
+## Force Range
 
-## Velocity Setting Pass
+### Two-Layer Hex Neighborhood
 
-### Input Processing
-**Spell Integration**: First pass of physics pipeline processes spell system velocity requests.
+**Coverage**: Objects check two layers of surrounding hexagons for force interactions.
 
-**Velocity Changes**: Direct velocity modifications rather than force accumulation.
+**Maximum Range**: All forces operate within sqrt(7)d/2 - d distance limit, where d is the hex cell size.
 
-**Tile Type Changes**: Spell effects can modify tile types alongside velocity changes.
+**Range Guarantee**: Two hex layers provide sufficient coverage for all force interactions given speed limits (~9.69 cells/second max).
 
-### Velocity Representation
-**Bit-Packed Format**: 
-- 3 bits for direction (8 cardinal/diagonal directions)
-- Remaining bits for magnitude/speed
-- Optimized for GPU memory bandwidth
+**Efficiency**: Neighbor checking limited to necessary range reduces computation.
 
-**Direction Constraints**: Movement limited to 8 directions to maintain grid alignment:
-- 4 Cardinal: North, South, East, West  
-- 4 Diagonal: Northeast, Northwest, Southeast, Southwest
+### Hexagonal Neighbor Lookup
 
-### Neighborhood Context
-**Context-Dependent Changes**: May examine local neighborhood for spell effects that depend on surrounding tiles.
+**Polar Coordinates**: Use polar/cube coordinate system for efficient neighbor queries.
 
-**Area Effects**: Handle spell effects that modify velocities across multiple tiles simultaneously.
+**Wrapped Boundaries**: Handle world wrapping when checking neighbors near edges.
 
-## Integration with Multi-Pass System
+**Layer Order**: Process neighbors in consistent order for deterministic results.
 
-### Pass 1 Role
-**Pipeline Position**: Velocity setting occurs before collision detection passes.
+## Collision Forces
 
-**State Preparation**: Establishes initial velocity state for collision calculation.
+### Purpose
 
-/**Data Flow**: Reads spell inputs → applies velocity changes → writes updated tile data.
+**Overlap Resolution**: Push objects apart when they overlap to prevent interpenetration.
 
-### Collision Response
-**Velocity Changes from Collisions**: Collision resolution can modify tile velocities.
+**Continuous Application**: Forces applied every frame while objects remain overlapping.
 
-**Type-Dependent Collision**: Different tile types may have different collision behaviors affecting resulting velocities.
+**Mass-Based Response**: Force produces different accelerations based on object mass.
 
-**Destruction Events**: Collisions can destroy tiles, removing them from velocity processing.
+### Force Characteristics
 
-## Spell System Integration
+**Repulsion**: Objects push apart when overlapping, with force directed away from collision point.
 
-### Input Format
-**Velocity Change Requests**: Structured data from spell system specifying:
-- Target tile position
-- New velocity vector (direction + magnitude)
-- Optional tile type changes
-- Priority/timing information
+**Overlap-Based Magnitude**: Force magnitude increases with overlap amount.
 
-**Batch Processing**: Handle multiple spell effects per tile in single pass.
+**Mass Influence**: Force applied to both objects, with acceleration inversely proportional to mass (F = ma).
 
-### Spell Effect Types
-**Direct Velocity**: Set tile velocity to specific value.
+**Breaking Threshold**: High overlap triggers combination mechanic instead of force (when distance < d).
 
-**Velocity Modification**: Add/subtract from existing velocity.
+### Formula
 
-**Conditional Changes**: Velocity changes based on tile type or neighborhood.
+**⚠️ NEEDS SPECIFICATION**: Exact collision force formula TBD through playtesting.
 
-**Area Effects**: Velocity changes applied to regions around spell targets.
+**Considerations**:
+- Linear vs non-linear force scaling with overlap distance
+- Force strength calibration for gameplay feel
+- Balance between collision response and combination trigger
+- Interaction with cohesion forces
 
-## Movement Model
+## Cohesion Forces
 
-### Sub-Grid Positioning
-**Offset System**: Tiles maintain sub-grid offsets between discrete positions.
+### Purpose
 
-**Smooth Interpolation**: Renderer uses offsets for smooth visual movement.
+**Gap Closure**: Automatically close gaps between objects for natural density management.
 
-**Physics Tick Alignment**: Offset precision ensures tiles align with grid at physics ticks.
+**Clustering**: Maintain dense object coverage without rigid grid constraints.
 
-### Speed and Timing
-**Variable Speeds**: Different tiles can move at different rates.
+**Breaking Force**: Allow high-velocity impacts to overcome cohesion and create temporary gaps.
 
-**Physics Tick Coordination**: All speeds calibrated to reach grid positions at physics ticks.
+### Force Characteristics
 
-**Deterministic Movement**: Consistent timing across all platforms and runs.
+**Attraction**: Objects within cohesion radius pull toward each other.
 
-## Technical Implementation
+**Density Management**: Prevents permanent gaps in object field while allowing dynamic separation.
 
-### GPU Compute Integration
-```wgsl
-// Velocity setting pass structure
-@compute @workgroup_size(8, 8)
-fn velocity_setting_pass(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let world_coord = calculate_world_coord(global_id);
-    
-    // Read current state
-    let current_tile = read_tile(world_coord);
-    let spell_inputs = read_spell_velocity_changes(world_coord);
-    
-    // Apply velocity modifications
-    var updated_tile = current_tile;
-    for (let i = 0; i < spell_inputs.count; i++) {
-        updated_tile = apply_spell_effect(updated_tile, spell_inputs.effects[i]);
-    }
-    
-    write_tile(world_coord, updated_tile);
-}
-```
+**Gameplay Interaction**: Creates emergent behavior where objects naturally cluster unless disrupted.
 
-### Memory Layout
-**Compact Storage**: Velocity data packed into minimal bits within tile data structure.
+### Formula
 
-**Efficient Access**: Velocity reading/writing optimized for GPU memory patterns.
+**⚠️ NEEDS SPECIFICATION**: Exact cohesion force formula and radius TBD through playtesting.
 
-**Spell Input Buffer**: Temporary buffer for spell system velocity change requests.
+**Considerations**:
+- Cohesion radius (likely smaller than two-layer range)
+- Force strength relative to collision forces
+- Linear vs clamped force falloff with distance
+- Centroid vs pairwise attraction
 
-## Performance Characteristics
+## Spell Forces
 
-### Processing Efficiency
-**Parallel Processing**: Each tile processes its velocity changes independently.
+### Element-Based Application
 
-**Minimal Computation**: Simple velocity assignment rather than complex force calculations.
+**Impulse Elements**: Some spell elements apply instantaneous velocity changes (impulses).
 
-**Memory Bandwidth**: Optimized data structures minimize GPU memory access.
+**Velocity-Setting Elements**: Other spell elements directly set object velocities to specific values.
 
-### Scalability Considerations
-**Spell Load**: Performance scales with number of active spell effects.
+**Element Determination**: Spell element type determines force application method.
 
-**Area Effects**: Efficient handling of spells affecting multiple tiles.
+**⚠️ NEEDS SPECIFICATION**: Mapping of spell elements to force types TBD through spell system design.
 
-**Context Processing**: Optional neighborhood examination for context-dependent effects.
+### Spell Shape Overlap
+
+**Buffer Lookup**: Objects check spell buffer for active spell shapes.
+
+**Overlap Detection**: Determine which spell shapes overlap the object's center point.
+
+**Multiple Spells**: Objects can be affected by multiple overlapping spell shapes.
+
+**Combination Order**: When multiple spells overlap, combine elements by cast time order (see [cross-reference:: [[spells|Spell System]]]).
+
+### Force Application
+
+**Impulse Method**: Add velocity delta to current velocity (Δv applied once per spell contact).
+
+**Velocity-Set Method**: Directly replace velocity with spell-specified value.
+
+**Mass Independence**: Spell forces may ignore mass (TBD through spell design).
+
+**Details**: See [cross-reference:: [[spells|Spell System]]] for spell shape mechanics and element combination rules.
+
+## Force Accumulation
+
+### Per-Frame Process
+
+**Force Sources**: Each frame, objects accumulate forces from:
+1. Collision forces (from overlapping objects)
+2. Cohesion forces (from nearby objects within radius)
+3. Spell forces (from overlapping spell shapes)
+
+**Summation**: Forces summed using vector addition.
+
+**Velocity Update**: Net force applied to update velocity: `v_new = v_old + (F_total / mass) * dt`
+
+**Position Update**: Updated velocity used to modify sub-grid offset.
+
+### Fixed-Point Arithmetic
+
+**Determinism**: All force calculations use fixed-point arithmetic for platform-independent results.
+
+**Precision**: Bit precision chosen to balance accuracy and GPU texture storage.
+
+**Overflow Prevention**: Force magnitudes clamped to prevent fixed-point overflow.
+
+**Details**: See [cross-reference:: [[determinism|Determinism]]] for fixed-point implementation.
 
 ## Integration Points
 
+### Movement System
+- Forces modify object velocities each frame
+- See [cross-reference:: [[movement-system|Movement System]]] for velocity and mass details
+
+### GPU Implementation
+- Force calculations performed in "Apply Forces + Move" pass
+- See [cross-reference:: [[gpu-shaders|GPU Shaders]]] for pipeline details
+
 ### Spell System
-**Input Interface**: Structured velocity change requests from spell processing.
+- Spell shapes provide force input from buffer
+- Element types determine force application method
+- See [cross-reference:: [[spells|Spell System]]] for spell mechanics
 
-**Timing Coordination**: Velocity changes applied at correct physics tick timing.
+## Design Considerations
 
-**Effect Validation**: Ensure spell effects produce valid velocity values.
+### Force Balance
 
-### Collision System
-**State Handoff**: Provides initial velocity state for collision detection passes.
+**Collision vs Cohesion**: Collision forces must overcome cohesion to allow object separation.
 
-**Result Integration**: Accepts velocity changes from collision resolution.
+**Spell Dominance**: Spell forces should be noticeable over ambient collision/cohesion forces.
 
-**Type Coordination**: Handles tile type changes that affect collision behavior.
+**Combination Threshold**: Objects approaching distance d should combine rather than bounce indefinitely.
 
-### Renderer
-**Interpolation Data**: Provides velocity and offset data for smooth visual movement.
+### Gameplay Tuning
 
-**Event Coordination**: Velocity changes may trigger visual effects.
+**Playtesting Required**: Force formulas will be refined through gameplay iteration.
 
-## Design Rationale
+**Adjustable Parameters**: Force strengths and radii exposed as configuration values.
 
-### No Traditional Forces
-**Grid Alignment**: Force-based physics would complicate grid-aligned movement.
+**Element Variation**: Different spell elements may use different force strengths/types.
 
-**Determinism**: Direct velocity setting is more predictable than force accumulation.
+### Performance
 
-**Performance**: Simpler calculations than continuous force integration.
+**Neighbor Limits**: Two-layer range constraint keeps force calculations bounded.
 
-**Spell Integration**: Direct velocity control better matches spell effect design.
+**Parallel Computation**: Force calculations fully parallelizable across objects in GPU.
 
-### Direction Constraints
-**Grid Consistency**: 8-direction movement maintains tile alignment with grid.
-
-**Visual Clarity**: Predictable movement directions improve gameplay readability.
-
-**Collision Simplification**: Limited directions simplify collision detection algorithms.
-
-**Memory Efficiency**: 3 bits sufficient for direction encoding.
+**Early Termination**: Skip force calculations for stationary objects with no nearby activity.

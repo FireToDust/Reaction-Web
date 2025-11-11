@@ -1,4 +1,18 @@
+---
+status: outdated
+warnings:
+  - "[outdated] OUTDATED IMPLEMENTATION PLAN: This describes implementation for the outdated Deterministic Time-Sliced Execution pipeline"
+  - "[outdated] References spatial ordering strategy which is not being used"
+  - "[outdated] References active region system which was decided against"
+  - "[breaking] Current architecture uses simultaneous single-read/single-write GPU passes instead of time-slicing"
+todo:
+  - "[documentation] Create new implementation guide based on actual architecture decisions"
+  - "[documentation] Remove references to time-sliced execution, spatial ordering, and active regions"
+---
+
 # Implementation Guide
+
+**⚠️ OUTDATED IMPLEMENTATION PLAN**: This document describes the implementation approach for an outdated Deterministic Time-Sliced Execution pipeline that is no longer being pursued. The current architecture uses simultaneous single-read/single-write GPU passes for determinism, does not use spatial ordering, and has decided against the active region optimization system.
 
 **⚠️ PROPOSED IMPLEMENTATION PLAN**: This document outlines the suggested implementation approach for the Deterministic Time-Sliced Execution pipeline. All timelines and priorities should be validated with the team.
 
