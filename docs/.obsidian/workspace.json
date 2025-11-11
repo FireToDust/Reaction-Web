@@ -4,49 +4,39 @@
     "type": "split",
     "children": [
       {
-        "id": "87ba2eb7337bceeb",
-        "type": "split",
+        "id": "0b437f7011d66a4e",
+        "type": "tabs",
         "children": [
           {
-            "id": "0b437f7011d66a4e",
-            "type": "tabs",
-            "dimension": 38.93072289156627,
-            "children": [
-              {
-                "id": "9cf8f53c6eccd117",
-                "type": "leaf",
-                "state": {
-                  "type": "graph",
-                  "state": {},
-                  "icon": "lucide-git-fork",
-                  "title": "Graph view"
-                }
-              }
-            ]
+            "id": "9cf8f53c6eccd117",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "architecture/systems/spells/element-system.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "element-system"
+            }
           },
           {
-            "id": "9b024db5e85e1c19",
-            "type": "tabs",
-            "dimension": 61.06927710843374,
-            "children": [
-              {
-                "id": "c7e65a839a2f77f2",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "index.md",
-                    "mode": "source",
-                    "source": false
-                  },
-                  "icon": "lucide-file",
-                  "title": "index"
-                }
-              }
-            ]
+            "id": "2b63b0b4a5ada346",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "architecture/architecture.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "architecture"
+            }
           }
         ],
-        "direction": "horizontal"
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -166,29 +156,9 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
-          },
-          {
-            "id": "8253c587d26894e7",
-            "type": "leaf",
-            "state": {
-              "type": "BC-matrix",
-              "state": {},
-              "icon": "BC-trail-icon",
-              "title": "Breadcrumbs Matrix"
-            }
-          },
-          {
-            "id": "87518c917c560505",
-            "type": "leaf",
-            "state": {
-              "type": "BC-tree",
-              "state": {},
-              "icon": "feather-corner-right-down",
-              "title": "Breadcrumbs Down"
-            }
           }
         ],
-        "currentTab": 5
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -204,47 +174,45 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "webpage-html-export:Export as HTML": false,
-      "breadcrumbs:Breadcrumbs Visualisation": false
+      "webpage-html-export:Export as HTML": false
     }
   },
-  "active": "c7e65a839a2f77f2",
+  "active": "2b63b0b4a5ada346",
   "lastOpenFiles": [
-    "docs.md",
+    "architecture/systems/physics/reactions.md",
+    "architecture/systems/physics/gpu-shaders.md",
+    "architecture/systems/physics/determinism.md",
+    "architecture/systems/physics/physics.md.tmp.6253.1762579364527",
+    "architecture/systems/physics/physics.md.tmp.6253.1762579302899",
+    "architecture/systems/physics/physics.md.tmp.6253.1762579301831",
+    "architecture/systems/physics/physics.md.tmp.6253.1762579301546",
+    "architecture/systems/systems.md.tmp.6253.1762579301305",
+    "architecture/systems/reactions/reactions.md",
+    "architecture/systems/physics/reactions/reactions.md",
+    "architecture/systems/physics/reactions",
+    "architecture/systems/reactions/reactions.md.tmp.6253.1762579296801",
+    "architecture/systems/reactions/reactions.md.tmp.6253.1762578714729",
+    "architecture/general/shader-data-layout.md",
+    "architecture/systems/physics/movement-system.md",
+    "architecture/systems/physics/physics.md",
+    "architecture/systems/physics/movement-system.md.tmp.6253.1762476711144",
+    "architecture/systems/systems.md",
+    "architecture/systems/core/core.md",
+    "architecture/systems/spells/spells.md",
+    "architecture/systems/reactions/rule-compilation.md",
+    "architecture/systems/spells/cpu-architecture.md.tmp.6253.1760486638437",
+    "architecture/systems/spells/deck-building.md",
+    "architecture/systems/spells/element-system.md",
+    "development/tasklist.md",
+    "index.md",
+    "development/development.md",
+    "development/DOCUMENTATION_STRUCTURE.md",
     "legacy/v1-visual-effects.md",
     "legacy/v1-reference.md",
     "legacy/v1-gpu-patterns.md",
-    "legacy/v1-environmental-examples.md",
     "legacy/v1-data-strategies.md",
-    "legacy/legacy.md",
-    "development/tasklist.md",
-    "development/getting-started.md",
-    "development/DOCUMENTATION_STRUCTURE.md",
-    "development/DEVELOPMENT_PRINCIPLES.md",
-    "development/development.md",
-    "development/building-documentation.md",
-    "development/tasklist.md.tmp.6253.1760387955597",
-    "development/tasklist.md.tmp.6253.1760387523019",
-    "index.md.tmp.6253.1760382802745",
-    "index.md.tmp.6253.1760382791708",
-    "index.md",
-    "index.md.tmp.6253.1760382393413",
-    "index.md.tmp.6253.1760382384838",
-    "index.md.tmp.6253.1760382377124",
-    "index.md.tmp.6253.1760382369622",
-    "architecture/architecture.md",
-    "architecture/general/deterministic-execution.md",
-    "architecture/general/data-flow.md",
-    "architecture/general/ghost-simulation.md",
-    "architecture/general/general.md",
-    "architecture/general/overview.md",
-    "architecture/general/implementation-guide.md",
-    "architecture/general/state-management.md",
-    "architecture/general/performance.md",
-    "architecture/general/variable-timing.md",
-    "architecture/general/technical-decisions.md",
-    "architecture/systems/core/active-regions.md",
-    "legacy",
-    "gameplay"
+    "architecture/systems/spells/spells-and-runes.md",
+    "architecture/systems/multiplayer/multiplayer.md",
+    "architecture/systems/gpu/gpu.md"
   ]
 }
