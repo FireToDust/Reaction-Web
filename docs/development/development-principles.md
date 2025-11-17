@@ -15,10 +15,15 @@
 - Optimize for the next person who reads your code
 
 ### Collaboration Over Ego
-- Distinguish between your ideas and team decisions
 - Make it easy for others to understand and build on your work
 - Ask questions when design decisions aren't clear
 - Share context behind your choices
+
+### Purpose Over Process
+- Focus on accomplishing the goal, not just following instructions literally
+- Understand why you're doing something before deciding how
+- When updating work, consider what would serve the reader, not just what changed
+- Question whether existing structure still serves its purpose
 
 ## Practical Guidelines
 
@@ -38,7 +43,11 @@
 - Understand the problem before jumping to solutions
 - Consider the person who will maintain this code in 6 months
 - Choose consistency with existing patterns over personal preference
-- Measure performance claims rather than guessing
+
+### When Updating Existing Work
+- Don't just replace what changed - step back and ensure the whole section still flows logically
+- Remove historical context that's no longer relevant to current readers
+- Fix structural issues or awkward transitions when you encounter them, even if you didn't create them
 
 ### Source Control Practices
 - Write clear, descriptive commit messages that explain the "why" not just the "what"

@@ -23,6 +23,7 @@ Player-controlled spellcasting creates runes on the game world through geometric
 ### Core Components
 
 - [[element-system|Element System]] - 26 elements in cube/octahedron structure
+- [[element-effects|Element Effects]] - What each element does (forces, transformations, passives)
 - [[mana-system|Mana System]] - 6 flower types with recharge and conversion
 - [[spells-and-runes|Spells and Runes]] - Casting interface and rune lifecycle
 - [[deck-building|Deck Building]] - Deck rules and pre-match construction
@@ -31,17 +32,14 @@ Player-controlled spellcasting creates runes on the game world through geometric
 
 ### Related Systems
 
-- [cross-reference:: [[../physics/physics|Physics System]]] - Force application from triggered runes
+- [cross-reference:: [[../physics/spell-integration|Spell Integration]]] - How spells affect physics layer
 - [cross-reference:: [[../core/core|Core Engine]]] - Texture management and layer coordination
-- [cross-reference:: [[../reactions/reactions|Reaction System]]] - Environmental interactions
 
 ## Integration Points
 
-**Physics Engine**: Triggered runes apply force vectors to physics layer. Independent tick rates coordinate timing.
+**Physics Engine**: Spells apply forces and trigger tile transformations - see [cross-reference:: [[../physics/spell-integration|Spell Integration]]].
 
-**Core Engine**: Manages rune layer texture for GPU processing.
-
-**Reaction Engine**: Runes can trigger environmental transformation rules.
+**Core Engine**: Manages spell layer texture for GPU processing.
 
 **UI System**: Displays casting slots/pools, mana flower availability, targeting overlay, and deck builder interface.
 

@@ -21,9 +21,6 @@ Complete documentation for the Reaction v2 real-time PvP grid-based spellcasting
 - [**Development**](development/development.md) - Setup, workflow, and development processes  
 - [**Gameplay**](gameplay/gameplay.md) - Core game mechanics and design philosophy
 
-### Reference
-- [**Legacy V1 Analysis**](legacy/legacy.md) - V1 system concepts for V2 development reference
-
 ## Quick Start
 
 **TODO**: Add quick start section with:

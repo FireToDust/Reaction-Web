@@ -11,8 +11,8 @@ Setup, workflow, and development processes for Reaction v2.
 
 ### Getting Started
 - [**Getting Started**](getting-started.md) - Project setup and first build
-- [**Development Principles**](DEVELOPMENT_PRINCIPLES.md) - Core values and guidelines for contributors
-- [**Documentation Structure**](DOCUMENTATION_STRUCTURE.md) - How to organize and navigate documentation
+- [**Development Principles**](development-principles.md) - Core values and guidelines for contributors
+- [**Documentation Structure**](documentation-structure.md) - How to organize and navigate documentation
 - [**Building Documentation**](building-documentation.md) - Export and deploy documentation to GitHub Pages
 
 ### Project Management
@@ -39,4 +39,4 @@ npm run format      # Prettier
 ## Development Principles
 
 ### Development Guidelines
-See [Development Principles](DEVELOPMENT_PRINCIPLES.md) for core values and [Documentation Structure](DOCUMENTATION_STRUCTURE.md) for information organization guidelines.
+See [Development Principles](development-principles.md) for core values and [Documentation Structure](documentation-structure.md) for information organization guidelines.

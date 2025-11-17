@@ -52,6 +52,6 @@ This document tracks all fields that need to be stored in GPU textures for physi
 
 ## Related Systems
 
-- **Physics**: Position, velocity, mass - see [cross-reference:: [[movement-system|Movement System]]]
-- **Reactions**: Timer type, timer value, type transformations - see [cross-reference:: [[reactions|Reaction System]]]
+- **Physics**: Position, velocity, mass - see [cross-reference:: [[physics/movement|Movement System]]]
+- **Reactions**: Timer type, timer value, type transformations - see [cross-reference:: [[physics/reactions|Reaction System]]]
 - **Rendering**: All data for visual representation - see [cross-reference:: [[rendering|Rendering]]]

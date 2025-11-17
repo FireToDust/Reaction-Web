@@ -92,11 +92,13 @@ Slot/pool casting interface with GPU-accelerated spell shapes, element combinati
 
 **Element Type**: One of 26 elements (see [cross-reference:: [[element-system|Element System]]])
 
-**Force Vector**: Applied to physics layer when triggered
+**Force Vector**: Applied to physics layer when triggered (see [cross-reference:: [[physics/spell-integration|Spell Integration]]])
 
 **Delay Counter**: Frame-based countdown
 
 **Storage**: Per-pixel on dedicated rune layer texture
+
+**Note**: ⚠️ Runes are being replaced by spell shapes - this document needs updating to reflect current architecture.
 
 ### Rune Combination
 

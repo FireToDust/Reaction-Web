@@ -22,10 +22,10 @@ Core architectural concepts, design patterns, and system design documentation fo
 - [**Technical Decisions**](technical-decisions.md) - Design choices and rationale
 
 ### Implementation Guides
-- [**Implementation Guide**](implementation-guide.md) - Step-by-step implementation approach **⚠️ OUTDATED**
-- [**Deterministic Execution**](deterministic-execution.md) - GPU determinism and cross-platform consistency **⚠️ PARTIALLY OUTDATED**
+- [**Implementation Guide**](implementation-guide.md) - Step-by-step implementation approach **⚠️ STUB**
+- [**Determinism**](determinism.md) - Fixed-point arithmetic and cross-platform consistency
 - [**Variable Timing System**](variable-timing.md) - Time slice scheduling and player action management **⚠️ PROPOSED**
-- [**State Management**](state-management.md) - Snapshots, rollback, and multiplayer synchronization **⚠️ PROPOSED**
+- [**State Management**](state-management.md) - Snapshots, rollback, and multiplayer synchronization **⚠️ STUB**
 - [**Ghost Simulation**](ghost-simulation.md) - Predictive action visualization system **⚠️ PROPOSED**
 
 ## Architectural Approach

@@ -91,6 +91,8 @@ Combinations of three base elements, forming rare specialized magic:
 
 ## Related Systems
 
+[[element-effects|Element Effects]] - What each element does (forces, transformations, passive effects)
+
 [cross-reference:: [[mana-system|Mana System]]] - Flower types match base elements, spell costs require specific combinations
 
 [cross-reference:: [[spells-and-runes|Spells and Runes]]] - Element combinations computed in GPU shaders during rune placement

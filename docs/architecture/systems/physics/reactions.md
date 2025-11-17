@@ -1,35 +1,41 @@
 ---
-tags:
-  - Navigation
 status: proposed
+tags:
+  - Architecture
+  - Implementation
 todo:
-  - "[design] Change combinations so second overlap prevents creation (no triple+ combinations)"
+  - "[design] Change object merging so second overlap prevents creation (no triple+ merges)"
   - "[design] Design cross-layer object creation during reactions"
-  - "[implementation] Build hashmap structure for combination reactions (type pairs -> new type)"
+  - "[design] Triple-element spells will provide passive modifications to reactions and forces for their duration"
+  - "[implementation] Build hashmap structure for merge reactions (type pairs -> new type)"
   - "[implementation] Design search tree for environmental reaction lookups"
   - "[discussion] Define all timer types needed (burning, freezing, electrified, etc.)"
-  - "[discussion] Define all reaction rules (combinations and environmental)"
+  - "[discussion] Define all reaction rules (merges and environmental)"
 ---
 
-# Reaction System
+# Reactions
 
-Type transformations triggered by object combinations, environmental interactions, and timers.
+Type transformations triggered by object merging, environmental neighbor patterns, and timers.
 
 ## Overview
 
-The reaction system determines how objects transform when they combine, interact with neighbors, or reach timer thresholds. Reactions are tightly integrated with physics, running every physics frame within the same GPU passes.
+The reaction system determines how objects transform when they interact. Primarily handles environmental reactions (neighbor-based patterns) but also provides type transformations during object merging. Reactions are tightly integrated with physics, running every physics frame within the same GPU passes.
+
+**Note**: Spell-triggered transformations are handled separately - see [cross-reference:: [[spell-integration|Spell Integration]]].
 
 ## Reaction Triggers
 
-### Combination Reactions
+### Object Merge Reactions
 
-**When**: Objects merge during physics overlap passes when distance < d.
+**When**: Objects merge during physics overlap passes when distance < d (see [[object-merging|Object Merging]]).
 
 **Lookup**: Hashmap mapping object type pairs to new types: `(type_a, type_b) -> new_type`
 
-**Multiple Objects**: When 3+ objects combine, only pairs are considered (see todo for preventing triple combinations).
+**Multiple Objects**: When 3+ objects merge, only pairs are considered (see todo for preventing triple merges).
 
 **Timer Reset**: All transformations reset the object's timer.
+
+**Source**: Object merging (physics-driven), NOT spell-triggered transformations.
 
 ### Environmental Reactions
 
@@ -117,11 +123,11 @@ The reaction system determines how objects transform when they combine, interact
 
 ## Hashmap Structure
 
-### Combination Reactions
+### Merge Reactions
 
 **Key**: Ordered or unordered pair of object types `(type_a, type_b)`.
 
-**Value**: New object type after combination.
+**Value**: New object type after merging.
 
 **Properties**: New object inherits mass from type, velocity from mass-weighted average.
 
@@ -133,11 +139,13 @@ The reaction system determines how objects transform when they combine, interact
 
 **Apply Forces + Move**: Environmental reactions happen during force application.
 
-**Overlap Passes**: Combination reactions happen during object merging.
+**Overlap Passes**: Merge reactions happen during object merging.
 
 **Set Grid Position**: Reactions complete before grid position updates.
 
 **Frequency**: Reactions run every physics frame (60fps).
+
+See [[passes|Pipeline Passes]] for multi-pass coordination.
 
 ### Shader Integration
 
@@ -146,8 +154,6 @@ The reaction system determines how objects transform when they combine, interact
 **Combined Shaders**: Environmental reactions integrated into force application shader.
 
 **Memory Efficiency**: Reuse neighborhood cache for both forces and reactions.
-
-**Details**: See [cross-reference:: [[gpu-shaders|GPU Shaders]]] for implementation.
 
 ## Transformation Types
 

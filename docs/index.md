@@ -30,7 +30,7 @@ We're currently in the architecture design phase, focusing on creating robust sy
 
 1. **Development Setup**: See [cross-reference:: [[development/getting-started|Getting Started Guide]]]
 2. **Architecture Overview**: Read [cross-reference:: [[architecture/general/overview|System Overview]]]
-3. **Development Principles**: Review [cross-reference:: [[development/DEVELOPMENT_PRINCIPLES|Core Principles]]]
+3. **Development Principles**: Review [cross-reference:: [[development/development-principles|Core Principles]]]
 
 ## Quick Commands
 

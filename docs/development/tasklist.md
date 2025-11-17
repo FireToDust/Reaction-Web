@@ -182,4 +182,4 @@ Automatically generated task list from all TODO items found in the documentation
 
 ---
 
-**Note**: This page automatically aggregates todos, warnings, and status information from frontmatter metadata across all documentation files. For complete documentation on how to use frontmatter fields (status, tags, todo categories, warning types) and integration with the documentation structure, see [cross-reference:: [[DOCUMENTATION_STRUCTURE#Frontmatter Metadata|Frontmatter Metadata Documentation]]].
+**Note**: This page automatically aggregates todos, warnings, and status information from frontmatter metadata across all documentation files. For complete documentation on how to use frontmatter fields (status, tags, todo categories, warning types) and integration with the documentation structure, see [cross-reference:: [[documentation-structure#Frontmatter Metadata|Frontmatter Metadata Documentation]]].

@@ -4,39 +4,65 @@
     "type": "split",
     "children": [
       {
-        "id": "0b437f7011d66a4e",
-        "type": "tabs",
+        "id": "ce0431930c0c06e4",
+        "type": "split",
         "children": [
           {
-            "id": "9cf8f53c6eccd117",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "architecture/systems/spells/element-system.md",
-                "mode": "source",
-                "source": false
+            "id": "0b437f7011d66a4e",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "9cf8f53c6eccd117",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "architecture/systems/spells/element-system.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "element-system"
+                }
               },
-              "icon": "lucide-file",
-              "title": "element-system"
-            }
+              {
+                "id": "1f7c3a25c882915c",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "architecture/architecture.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "architecture"
+                }
+              }
+            ]
           },
           {
-            "id": "2b63b0b4a5ada346",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "architecture/architecture.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "architecture"
-            }
+            "id": "8fb6618d49e399ab",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "2b63b0b4a5ada346",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "architecture/general/data-flow.md",
+                    "mode": "source",
+                    "source": false
+                  },
+                  "icon": "lucide-file",
+                  "title": "data-flow"
+                }
+              }
+            ]
           }
         ],
-        "currentTab": 1
+        "direction": "horizontal"
       }
     ],
     "direction": "vertical"
@@ -177,42 +203,43 @@
       "webpage-html-export:Export as HTML": false
     }
   },
-  "active": "2b63b0b4a5ada346",
+  "active": "a976a092d9902668",
   "lastOpenFiles": [
-    "architecture/systems/physics/reactions.md",
-    "architecture/systems/physics/gpu-shaders.md",
-    "architecture/systems/physics/determinism.md",
-    "architecture/systems/physics/physics.md.tmp.6253.1762579364527",
-    "architecture/systems/physics/physics.md.tmp.6253.1762579302899",
-    "architecture/systems/physics/physics.md.tmp.6253.1762579301831",
-    "architecture/systems/physics/physics.md.tmp.6253.1762579301546",
-    "architecture/systems/systems.md.tmp.6253.1762579301305",
-    "architecture/systems/reactions/reactions.md",
-    "architecture/systems/physics/reactions/reactions.md",
-    "architecture/systems/physics/reactions",
-    "architecture/systems/reactions/reactions.md.tmp.6253.1762579296801",
-    "architecture/systems/reactions/reactions.md.tmp.6253.1762578714729",
+    "architecture/systems/spells/spells.md.tmp.30379.1762925184103",
+    "architecture/systems/spells/element-effects.md",
+    "architecture/systems/physics/reactions.md.tmp.30379.1762925067946",
+    "architecture/systems/physics/reactions.md.tmp.30379.1762925067707",
+    "architecture/systems/physics/reactions.md.tmp.30379.1762925067475",
+    "architecture/systems/physics/reactions.md.tmp.30379.1762925067058",
+    "architecture/systems/physics/movement.md",
+    "architecture/systems/physics/spell-integration.md",
+    "architecture/systems/physics/passes.md",
+    "architecture/systems/physics/object-merging.md",
+    "architecture/systems/physics/collision.md",
+    "architecture/systems/physics/cohesion.md",
+    "architecture/general/determinism.md",
+    "architecture/general/data-flow.md",
+    "docs.md",
+    "architecture/systems/multiplayer/network-protocol.md",
+    "architecture/general/technical-decisions.md",
+    "architecture/general/state-management.md",
     "architecture/general/shader-data-layout.md",
-    "architecture/systems/physics/movement-system.md",
-    "architecture/systems/physics/physics.md",
-    "architecture/systems/physics/movement-system.md.tmp.6253.1762476711144",
-    "architecture/systems/systems.md",
-    "architecture/systems/core/core.md",
-    "architecture/systems/spells/spells.md",
-    "architecture/systems/reactions/rule-compilation.md",
-    "architecture/systems/spells/cpu-architecture.md.tmp.6253.1760486638437",
-    "architecture/systems/spells/deck-building.md",
-    "architecture/systems/spells/element-system.md",
-    "development/tasklist.md",
-    "index.md",
-    "development/development.md",
-    "development/DOCUMENTATION_STRUCTURE.md",
-    "legacy/v1-visual-effects.md",
-    "legacy/v1-reference.md",
-    "legacy/v1-gpu-patterns.md",
-    "legacy/v1-data-strategies.md",
+    "architecture/general/performance.md",
+    "architecture/general/implementation-guide.md",
+    "architecture/general/deterministic-execution.md",
     "architecture/systems/spells/spells-and-runes.md",
-    "architecture/systems/multiplayer/multiplayer.md",
-    "architecture/systems/gpu/gpu.md"
+    "architecture/systems/spells/spells.md",
+    "architecture/systems/spells/mana-system.md",
+    "architecture/systems/spells/cpu-architecture.md",
+    "architecture/systems/ui/ui.md",
+    "architecture/systems/multiplayer/deployment.md",
+    "architecture/general/state-management.md.tmp.30379.1762918647395",
+    "architecture/systems/multiplayer/performance.md.tmp.30379.1762918612229",
+    "architecture/systems/multiplayer/security.md.tmp.30379.1762918608770",
+    "architecture/systems/multiplayer/network-protocol.md.tmp.30379.1762918602882",
+    "architecture/systems/multiplayer/server-architecture.md.tmp.30379.1762918597202",
+    "architecture/systems/multiplayer/security.md.tmp.30379.1762918292535",
+    "development/tasklist.md",
+    "architecture/general/variable-timing.md"
   ]
 }

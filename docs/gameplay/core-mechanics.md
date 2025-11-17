@@ -14,15 +14,12 @@ todo:
 ### Match Structure
 **Duration**: Unlimited match length - games end only when elimination occurs
 **Player Count**: Variable player count, limited only by performance constraints
-**Real-Time Execution**: Continuous simulation without traditional turns
+**Real-Time Execution**: Continuous simulation
 
 ## Player Action System
 
 ### Movement and Timing
-**Non-Turn-Based**: Game runs continuously with different processes at different frequencies
-**Pre-Planning**: Players queue actions in advance
-**Execution Timing**: Player actions execute at regular intervals determined by game state
-**Dynamic Speed**: Object movement speed controlled by time delays between tile position updates
+**Execution Timing**: Player actions execute in real-time
 **Status Effects**: Players can be slowed, frozen, or otherwise affected by spells and environment
 
 ### Action Flow Pattern
@@ -66,7 +63,7 @@ todo:
 
 ### Resource Management
 **No Scarcity**: Unlimited mana flower regeneration - focus on timing and positioning over resource conservation
-**Mana Recharge**: 3-turn recharge cycle provides natural pacing without creating resource pressure
+**Mana Recharge**: Timed recharge cycle provides natural pacing without creating resource pressure
 
 ### Anti-Stalemate Mechanics
 **Tile-Based Escalation**: Environmental changes naturally create pressure and opportunities
@@ -97,7 +94,7 @@ See [cross-reference:: [[../architecture/systems/spells/spells|Spell System]]] f
 - Defensive counter-element selection against opponents
 
 **Resource Management**:
-- Mana flower spending patterns with 3-turn recharge cycles
+- Mana flower spending patterns with timed recharge cycles
 - Action cooldown timing (cast/load/refresh decisions)
 - Refresh action strategic use (tempo cost for pool cycling)
 
@@ -109,7 +106,7 @@ See [cross-reference:: [[../architecture/systems/spells/spells|Spell System]]] f
 **Tactical Execution**:
 - Slot/pool management (when to cast vs load)
 - Directional targeting precision
-- Rune overlap timing for combinations
+- Spell overlap timing for combinations
 
 ### Depth Mechanisms
 - **Rule Interactions**: Complex behaviors arising from rule combinations
