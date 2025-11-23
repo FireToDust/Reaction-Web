@@ -25,8 +25,8 @@ npm run build  # Production build
 **IMPORTANT**: At the start of any conversation, read through the complete documentation in [docs/](docs/) to fully understand the project before beginning work.
 
 **Required Reading**: Check these before contributing to the project
-- **Development Principles**: [docs/development/DEVELOPMENT_PRINCIPLES.md](docs/development/DEVELOPMENT_PRINCIPLES.md)
-- **Documentation Structure**: [docs/development/DOCUMENTATION_STRUCTURE.md](docs/development/DOCUMENTATION_STRUCTURE.md)
+- **Development Principles**: [docs/development/development-principles.md](docs/development/development-principles.md)
+- **Documentation Structure**: [docs/development/documentation-structure.md](docs/development/documentation-structure.md)
 
 ## Critical Guidelines
 - Always ask approval before making design decisions not explicitly provided
