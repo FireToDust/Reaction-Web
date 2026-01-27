@@ -5,11 +5,12 @@ tags:
 
 # Development Documentation
 
-Setup, workflow, and development processes for Reaction v2.
+Setup, workflow, and development processes for Reaction.
 
 ## Navigation
 
 ### Getting Started
+- [**Current State**](current-state.md) - Authoritative source for project decisions and current state 
 - [**Getting Started**](getting-started.md) - Project setup and first build
 - [**Development Principles**](development-principles.md) - Core values and guidelines for contributors
 - [**Documentation Structure**](documentation-structure.md) - How to organize and navigate documentation
