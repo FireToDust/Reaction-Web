@@ -58,8 +58,21 @@
                   "icon": "lucide-file",
                   "title": "data-flow"
                 }
+              },
+              {
+                "id": "7beef320a3f3b2ba",
+                "type": "leaf",
+                "state": {
+                  "type": "release-notes",
+                  "state": {
+                    "currentVersion": "1.10.6"
+                  },
+                  "icon": "lucide-book-up",
+                  "title": "Release Notes 1.10.6"
+                }
               }
-            ]
+            ],
+            "currentTab": 1
           }
         ],
         "direction": "horizontal"
@@ -203,8 +216,12 @@
       "webpage-html-export:Export as HTML": false
     }
   },
-  "active": "2b63b0b4a5ada346",
+  "active": "7beef320a3f3b2ba",
   "lastOpenFiles": [
+    "development/current-state.md.tmp.84298.1769552666065",
+    "development/current-state.md.tmp.84298.1769552176889",
+    "development/current-state.md",
+    "architecture/general/data-flow.md",
     "development/documentation-structure.md",
     "docs.md",
     "architecture/architecture.md",
@@ -219,7 +236,6 @@
     "architecture/systems/multiplayer/network-protocol.md",
     "architecture/systems/multiplayer/security.md",
     "architecture/systems/multiplayer/performance.md",
-    "architecture/general/data-flow.md",
     "architecture/general/state-management.md",
     "architecture/systems/multiplayer/multiplayer.md",
     "architecture/general/implementation-guide.md",
@@ -229,8 +245,6 @@
     "architecture/systems/physics/object-merging.md",
     "architecture/systems/physics/passes.md",
     "architecture/systems/physics/spell-integration.md",
-    "architecture/systems/physics/movement.md",
-    "architecture/systems/physics/reactions.md",
     "architecture/systems/spells/spells.md.tmp.30379.1762925184103",
     "architecture/systems/physics/reactions.md.tmp.30379.1762925067946",
     "architecture/systems/physics/reactions.md.tmp.30379.1762925067707",
@@ -239,7 +253,6 @@
     "architecture/general/state-management.md.tmp.30379.1762918647395",
     "architecture/systems/multiplayer/performance.md.tmp.30379.1762918612229",
     "architecture/systems/multiplayer/security.md.tmp.30379.1762918608770",
-    "architecture/systems/multiplayer/network-protocol.md.tmp.30379.1762918602882",
-    "architecture/systems/multiplayer/server-architecture.md.tmp.30379.1762918597202"
+    "architecture/systems/multiplayer/network-protocol.md.tmp.30379.1762918602882"
   ]
 }

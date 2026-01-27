@@ -1,8 +1,8 @@
-# Welcome to Reaction V2
+# Welcome to Reaction
 
-## A Real-Time PvP Grid-Based Spellcasting Game
+## A 2D Real-Time PvP Spellcasting Game
 
-Reaction v2 is a complete reimagining of the original Reaction game, featuring GPU-accelerated physics, deterministic gameplay, and a powerful spell crafting system where players cast spells that place magical runes, transforming terrain through physics-based rule systems.
+Reaction is a real-time PvP spellcasting game where spells interact with terrain and each other through deterministic physics. The terrain transforms continuously, fire spreads, tiles collide and transfer momentum, and the battlefield evolves as you fight.
 
 ## Current Status: Architecture Phase
 
@@ -10,11 +10,10 @@ We're currently in the architecture design phase, focusing on creating robust sy
 
 ## Key Features
 
-- **Real-time PvP Combat** - Fast-paced multiplayer battles on grid-based terrain
-- **Spell Crafting System** - Create custom spell combinations using magical runes
-- **Rule-based Physics** - Dynamic terrain transformation through deterministic physics
-- **GPU Acceleration** - High-performance rendering and physics calculations
-- **Deterministic Gameplay** - Consistent game state across all clients for competitive play
+- **Real-Time PvP** - Continuous action combat with no turns
+- **Interactive Terrain** - Spells transform the environment, which affects gameplay
+- **Deterministic Physics** - Fair competitive play where identical inputs produce identical results
+- **High Performance** - Thousands of interacting tiles at 60 FPS
 
 ## Documentation
 
@@ -22,9 +21,6 @@ We're currently in the architecture design phase, focusing on creating robust sy
 - [cross-reference:: [[architecture/architecture|Architecture]]] - System design and technical approach
 - [cross-reference:: [[development/development|Development]]] - Setup, workflow, and development processes
 - [cross-reference:: [[gameplay/gameplay|Gameplay]]] - Core game mechanics and design philosophy
-
-### Reference
-- [cross-reference:: [[legacy/legacy|Legacy V1 Analysis]]] - V1 system concepts for V2 development reference
 
 ## Getting Started
 

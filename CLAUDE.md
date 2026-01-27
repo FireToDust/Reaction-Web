@@ -1,6 +1,6 @@
-# Reaction v2 Project Context
+# Reaction Project Context
 
-Real-time PvP grid-based spellcasting game where players cast spells that place magical runes, transforming terrain through rule-based systems.
+Real-time PvP spellcasting game where players cast spells that place magical runes, transforming terrain through rule-based systems.
 
 ## Current Development Stage
 **ARCHITECTURE PHASE** - Designing system architecture before interfaces/tests/implementation
@@ -25,6 +25,7 @@ npm run build  # Production build
 **IMPORTANT**: At the start of any conversation, read through the complete documentation in [docs/](docs/) to fully understand the project before beginning work.
 
 **Required Reading**: Check these before contributing to the project
+- **Current State**: [docs/development/current-state.md](docs/development/current-state.md) - Always check here first to avoid outdated assumptions
 - **Development Principles**: [docs/development/development-principles.md](docs/development/development-principles.md)
 - **Documentation Structure**: [docs/development/documentation-structure.md](docs/development/documentation-structure.md)
 

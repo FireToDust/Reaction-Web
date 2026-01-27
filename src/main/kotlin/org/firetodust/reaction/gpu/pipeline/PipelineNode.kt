@@ -1,4 +1,4 @@
-package org.firetodust.reaction.gpu
+package org.firetodust.reaction.gpu.pipeline
 
 /**
  * Base type for all nodes in the GPU compute pipeline.
