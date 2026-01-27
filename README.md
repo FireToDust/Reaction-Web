@@ -13,4 +13,4 @@ npm run build
 
 ## Documentation
 
-See [docs/](docs/README.md) for complete documentation and architecture details. The documentation acts as a tree so all information can be found from this file.
+See [docs/](https://firetodust.github.io/Reaction-Web/) for complete documentation and architecture details. 
