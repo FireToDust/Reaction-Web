@@ -72,9 +72,21 @@
                   "icon": "lucide-file",
                   "title": "index"
                 }
+              },
+              {
+                "id": "cb9b8fe47920dc58",
+                "type": "leaf",
+                "state": {
+                  "type": "release-notes",
+                  "state": {
+                    "currentVersion": "1.12.7"
+                  },
+                  "icon": "lucide-book-up",
+                  "title": "Release Notes 1.12.7"
+                }
               }
             ],
-            "currentTab": 1
+            "currentTab": 2
           }
         ],
         "direction": "horizontal"
@@ -218,19 +230,21 @@
       "webpage-html-export:Export as HTML": false
     }
   },
-  "active": "7beef320a3f3b2ba",
+  "active": "cb9b8fe47920dc58",
   "lastOpenFiles": [
+    "patterns/chainable-factory.md",
+    "patterns",
+    "development/current-state.md",
+    "index.md",
+    "development/development.md",
     "development/current-state.md.tmp.84298.1769552666065",
     "development/current-state.md.tmp.84298.1769552176889",
-    "development/current-state.md",
     "architecture/general/data-flow.md",
     "development/documentation-structure.md",
     "docs.md",
     "architecture/architecture.md",
     "gameplay/core-mechanics.md",
     "development/development-principles.md",
-    "index.md",
-    "development/development.md",
     "development/tasklist.md",
     "development/getting-started.md",
     "architecture/systems/multiplayer/deployment.md",
@@ -253,8 +267,6 @@
     "architecture/systems/physics/reactions.md.tmp.30379.1762925067475",
     "architecture/systems/physics/reactions.md.tmp.30379.1762925067058",
     "architecture/general/state-management.md.tmp.30379.1762918647395",
-    "architecture/systems/multiplayer/performance.md.tmp.30379.1762918612229",
-    "architecture/systems/multiplayer/security.md.tmp.30379.1762918608770",
-    "architecture/systems/multiplayer/network-protocol.md.tmp.30379.1762918602882"
+    "architecture/systems/multiplayer/performance.md.tmp.30379.1762918612229"
   ]
 }

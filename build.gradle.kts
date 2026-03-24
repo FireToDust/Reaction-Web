@@ -10,7 +10,14 @@ repositories {
 }
 
 val lwjglVersion = "3.3.6"
-val lwjglNatives = "natives-macos"
+
+// Detect platform for LWJGL natives
+val lwjglNatives = when (org.gradle.internal.os.OperatingSystem.current()) {
+    org.gradle.internal.os.OperatingSystem.LINUX -> "natives-linux"
+    org.gradle.internal.os.OperatingSystem.MAC_OS -> "natives-macos"
+    org.gradle.internal.os.OperatingSystem.WINDOWS -> "natives-windows"
+    else -> throw GradleException("Unsupported platform: ${org.gradle.internal.os.OperatingSystem.current()}")
+}
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -25,6 +32,9 @@ dependencies {
     implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-vulkan:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-yoga:$lwjglVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation(kotlin("reflect"))
 
     // natives (runtime only)
     runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives")
@@ -45,7 +55,15 @@ repositories {
 
 tasks.test {
     useJUnitPlatform()
+    // On macOS, use glfw_async to work with BGFX without -XstartOnFirstThread
+    // glfw_async handles Cocoa threading internally, allowing BGFX to have a main loop
+    systemProperty("org.lwjgl.glfw.library.name", "glfw_async")
+
+    // Fork a new JVM for each test class (BGFX can only be initialized once per JVM)
+    forkEvery = 1
+    maxParallelForks = 1
 }
+
 kotlin {
     jvmToolchain(24)
 }
